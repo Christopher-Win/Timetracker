@@ -1,0 +1,41 @@
+using Microsoft.EntityFrameworkCore;
+using TimeTracker.Data;
+using TimeTracker.Services;
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.ConfigureSwaggerGen(setup =>
+{
+    setup.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Time Tracker",
+        Version = "v1"
+    });
+});
+builder.Services.AddControllers();
+builder.Services.AddScoped<AuthService>();  // Register AuthService here
+
+
+//builder.Services.AddSingleton<AuthService>(new AuthService(builder.Configuration.GetConnectionString("DefaultConnection"))); // This should register the AuthService with the DI container
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection"); // This should get the connection string from the appsettings.json file
+builder.Services.AddDbContext<ApplicationDBContext>(options => // This should register the DbContext with the DI container which will allow it to be injected into other classes
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options => options.EnableRetryOnFailure()));
+
+var app = builder.Build(); 
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+
+app.MapControllers(); // This should map my Controllers apis
+app.Run();
