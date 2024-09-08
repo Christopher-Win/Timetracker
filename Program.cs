@@ -26,7 +26,10 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => // This should re
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options => options.EnableRetryOnFailure()));
 
 var app = builder.Build(); 
-
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

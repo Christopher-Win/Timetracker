@@ -1,4 +1,20 @@
 {
     "appService.preDeployTask": "publish-release",
-    "appService.deploySubpath": "bin/Release/net8.0/publish"
+    "appService.deploySubpath": "bin/Release/net8.0/publish",
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "timetracker-db.mysql.database.azure.com",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "timetrackerDB",
+            "database": "timetrackerDB",
+            "username": "team78_db_admin",
+            "askForPassword": true
+        }
+    ]
 }
