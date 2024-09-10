@@ -1,0 +1,28 @@
+# Build Folders
+bin/
+obj/
+
+# User-specific files
+.vscode/
+*.user
+*.vspscc
+
+# Build Outputs
+*.dll
+*.exe
+*.zip
+
+# NuGet
+project.nuget.cache
+project.assets.json
+*.nupkg
+
+# Logs
+*.log
+
+# Publish outputs
+publish.zip
+
+# Visual Studio files
+.vscode
+.launchSettings.json
