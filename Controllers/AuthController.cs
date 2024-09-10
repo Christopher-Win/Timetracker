@@ -25,12 +25,12 @@ namespace TimeTracker.Controllers{
             }
         }
 
-        [HttpPost]
-        public IActionResult Create(User newUser)
-        {
-            var user = _service.CreateUser(newUser);
-            return CreatedAtAction(nameof(GetById), new { id = user!.NetID }, user);
-        }
+        // [HttpPost]
+        // public IActionResult Create(User newUser)
+        // {
+        //     var user = _service.CreateUser(newUser);
+        //     return CreatedAtAction(nameof(GetById), new { id = user!.NetID }, user);
+        // }
 
         // [HttpPost]
         // public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
