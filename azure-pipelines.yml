@@ -1,0 +1,47 @@
+# Define when the pipeline runs
+trigger:
+  branches:
+    include:
+      - main  # Runs on push to the 'main' branch
+
+# Use a Microsoft-hosted agent for running the build
+pool:
+  vmImage: 'ubuntu-latest'
+
+# Steps to run in the pipeline
+steps:
+  # Check out the source code from the repository
+  - task: UseDotNet@2
+    inputs:
+      packageType: 'sdk'
+      version: '6.x'  # Use the appropriate version of the .NET Core SDK
+
+  # Restore the dependencies for the project
+  - script: |
+      dotnet restore
+    displayName: 'Restore NuGet Packages'
+
+  # Build the project in release mode
+  - script: |
+      dotnet build --configuration Release --no-restore
+    displayName: 'Build the Project'
+
+  # Run unit tests
+  - script: |
+      dotnet test --configuration Release --no-build --verbosity normal
+    displayName: 'Run Unit Tests'
+
+  # Publish the build output (artifacts) for deployment
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
+      publishLocation: 'Container'
+
+  # Deploy to Azure App Service (optional if using CD)
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: '<Your Azure Subscription>'
+      appName: '<Your Azure App Service Name>'
+      package: '$(Build.ArtifactStagingDirectory)/drop/*.zip'
+    displayName: 'Deploy to Azure App Service'
