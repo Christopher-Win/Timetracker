@@ -4,7 +4,6 @@ using TimeTracker.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureSwaggerGen(setup =>
@@ -19,7 +18,6 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();  // Register AuthService here
 
 
-//builder.Services.AddSingleton<AuthService>(new AuthService(builder.Configuration.GetConnectionString("DefaultConnection"))); // This should register the AuthService with the DI container
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection"); // This should get the connection string from the appsettings.json file
 builder.Services.AddDbContext<ApplicationDBContext>(options => // This should register the DbContext with the DI container which will allow it to be injected into other classes

@@ -18,11 +18,27 @@ namespace TimeTracker.Services{
             return user != null ? user : null;
         }
         
-        public User CreateUser(User user)
+        public async Task<Result> RegisterAsync(User newUser)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
-            return user;
+            var existingUser = await _context.Users.SingleOrDefaultAsync(u => u.NetID == newUser.NetID);
+            if (existingUser != null)
+            {
+                return new Result { Success = false, Message = "NetID is already taken." };
+            }
+        
+            var hashedPassword = HashPassword(newUser.Password); // Hash the password before saving it to the database
+        
+            var user = new User
+            {
+                NetID = newUser.NetID,
+                Password = hashedPassword,
+                CreatedAt = DateTime.Now
+            };
+        
+            _context.Users.Add(user);   // Add the user to the database
+            await _context.SaveChangesAsync();  // Save the changes to the database
+        
+            return new Result { Success = true }; // Return a success message once the new user has been saved to the database
         }
         // public async Task<Result> AuthenticateUser(string netID, string password) // This method will open a connection to the database and check if the user exists when a user tries to log in.
         // {
@@ -56,41 +72,24 @@ namespace TimeTracker.Services{
         //     }
         // }
 
-        // public static string HashPassword(string password)
-        // {
-        //     using (var sha256 = SHA256.Create())
-        //     {
-        //         byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-        //         StringBuilder builder = new StringBuilder();
-        //         foreach (var b in bytes)
-        //         {
-        //             builder.Append(b.ToString("x2"));
-        //         }
-        //         return builder.ToString();
-        //     }
-        // }
-        // public class Result
-        // {
-        //     public bool Success { get; set; }
-        //     public string Message { get; set; }
-        // }
-        // public async Task<Result> CreateUser(User user)
-        // {
-        //     using (var connection = new MySqlConnection(_connectionString))
-        //     {
-        //         await connection.OpenAsync();
-
-        //         string query = "INSERT INTO Users (netID, Password) VALUES (@netID, @Password)";
-        //         using (var command = new MySqlCommand(query, connection))
-        //         {
-        //             command.Parameters.AddWithValue("@netID", user.netID); // 
-        //             command.Parameters.AddWithValue("@Password", HashPassword(user.Password));  // Hash the password
-
-        //             int result = await command.ExecuteNonQueryAsync(); // Execute the query and return the number of rows affected
-        //             return new Result { Success = true, Message = "User created successfully" };
-        //         }
-        //     }
-        // }
+        public static string HashPassword(string password)
+        {
+            using (var sha256 = SHA256.Create())
+            {
+                byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                StringBuilder builder = new StringBuilder();
+                foreach (var b in bytes)
+                {
+                    builder.Append(b.ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
+        public class Result
+        {
+            public bool Success { get; set; }
+            public string Message { get; set; }
+        }
 
     }
 }

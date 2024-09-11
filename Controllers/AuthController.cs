@@ -7,13 +7,12 @@ namespace TimeTracker.Controllers{
     [ApiController]
     public class AuthController(AuthService service) : ControllerBase
     {
-        // Mock database for demonstration
-        private readonly AuthService _service = service; // This creates a private field to store the AuthService called _authService
+        private readonly AuthService _authService = service; // This creates a private field to store the AuthService called _authService
 
         [HttpGet("{id}")]
         public ActionResult<User> GetById(string id)
         {
-            var user = _service.GetById(id);
+            var user = _authService.GetById(id);
 
             if(user is not null)
             {
@@ -42,40 +41,32 @@ namespace TimeTracker.Controllers{
         //     return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
         // }
 
-        // [HttpPost("register")]
-    //     public async Task<IActionResult> Register([FromForm] RegisterRequest request)
-    //     {
-    //         // Validate the request data
-    //         if (!ModelState.IsValid)
-    //         {
-    //             return BadRequest(ModelState);
-    //         }
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromForm] User user)
+        {
+            // Validate the request data
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-    //         // Create a new user object
-    //         var user = new User
-    //         {
-    //             NetID = request.NetID,
-    //             Password = request.Password
-    //         };
+            // Save the user to the database
+            var result = await _authService.RegisterAsync(user);
 
-    //         // Save the user to the database
-    //         var result = await _authService.CreateUser(user);
+            if (result.Success)
+            {
+                Console.WriteLine($"User created successfully: {user.NetID}");
+                return Ok($"User created successfully: {user.NetID}");
+            }
 
-    //         if (result.Success)
-    //         {
-    //             Console.WriteLine($"User created successfully: {user.NetID}");
-    //             return Ok($"User created successfully: {user.NetID}");
-    //         }
-
-    //         Console.WriteLine($"Failed to register user: {user.NetID}");
-    //         return BadRequest(result.Message);
-    //     }
-    //     public class RegisterRequest
-    //     {
-    //         public required string NetID { get; set; }
-
-    //         public required string Password { get; set; }
-    //     }
+            Console.WriteLine($"Failed to register user: {user.NetID}");
+            return BadRequest(result.Message);
+        }
+        public class RegisterRequest
+        {
+            public required string NetID { get; set; }
+            public required string Password { get; set; }
+        }
 
     //     [HttpPost("login")]
     //     public async Task<IActionResult> Login([FromForm] LoginRequest request)
