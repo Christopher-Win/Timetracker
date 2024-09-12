@@ -41,7 +41,7 @@ namespace TimeTracker.Services{
             return new Result { Success = true }; // Return a success message once the new user has been saved to the database
         }
         // public async Task<Result> AuthenticateUser(string netID, string password) // This method will open a connection to the database and check if the user exists when a user tries to log in.
-        // {
+        // { 
         //     using (var connection = new MySqlConnection(_connectionString)) // Create a MySQL connection to the database for th duration of the using block
         //     {
         //         await connection.OpenAsync(); // Open the connection to the database

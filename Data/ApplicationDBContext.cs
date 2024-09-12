@@ -13,8 +13,22 @@ namespace TimeTracker.Data
         }
 
         public DbSet<User> Users { get; set; }   // Example model
-        // public DbSet<TimeLog> TimeLogs { get; set; }   // Example model
+        public DbSet<TimeLog> TimeLogs { get; set; }
+        public DbSet<TimeLogEntry> TimeLogEntries { get; set; }
 
-        // Additional DbSet properties for other models
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            // One-to-many relationship between User and TimeLog
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.TimeLogs)
+                .WithOne(t => t.User)
+                .HasForeignKey(t => t.UserId);
+
+            // One-to-many relationship between TimeLog and TimeLogEntry
+            modelBuilder.Entity<TimeLog>()
+                .HasMany(t => t.TimeLogEntries)
+                .WithOne(e => e.TimeLog)
+                .HasForeignKey(e => e.TimeLogId);
+        }
     }
 }
