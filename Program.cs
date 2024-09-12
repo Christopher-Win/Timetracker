@@ -16,6 +16,7 @@ builder.Services.ConfigureSwaggerGen(setup =>
 });
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();  // Register AuthService here
+builder.Services.AddScoped<TimeLogService>();  // Register TimeLogService here
 
 
 
