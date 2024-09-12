@@ -15,7 +15,7 @@ namespace TimeTracker.Models
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;  // Default value for CreatedAt
         
-        [JsonIgnore]
+        [JsonIgnore]//telling the serializer to ignore the TimeLog navigation property when serializing the TimeLogEntry object, which breaks the circular reference.
         public TimeLog TimeLog { get; set; }  // Navigation property to TimeLog
     }
 }
