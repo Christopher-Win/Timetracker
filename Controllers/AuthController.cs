@@ -1,56 +1,55 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Models;
 using TimeTracker.Services;
+using System.Security.Claims;
 
-namespace TimeTracker.Controllers{
+namespace TimeTracker.Controllers
+{
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController(AuthService service) : ControllerBase
+    public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService = service; // This creates a private field to store the AuthService called _authService
+        private readonly AuthService _authService;
 
-        [HttpGet("{id}")]
-        public ActionResult<User> GetById(string id)
+        public AuthController(AuthService authService)
         {
-            var user = _authService.GetById(id);
-
-            if(user is not null)
-            {
-                return user;
-            }
-            else
-            {
-                return NotFound();
-            }
+            _authService = authService;
         }
 
-        // [HttpPost]
-        // public IActionResult Create(User newUser)
-        // {
-        //     var user = _service.CreateUser(newUser);
-        //     return CreatedAtAction(nameof(GetById), new { id = user!.NetID }, user);
-        // }
+        // Secured endpoint to get the user based on the JWT stored in the cookie
+        [HttpGet("me")]
+        [Authorize]  // Ensure that the user is authenticated
+        public ActionResult<User> GetUserFromJwt()
+        {
+            // Extract the NetID from the authenticated user's claims
+            var netIDClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        // [HttpPost]
-        // public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
-        // {
-        //     _context.TodoItems.Add(todoItem);
-        //     await _context.SaveChangesAsync();
+            if (string.IsNullOrEmpty(netIDClaim))
+            {
+                return Unauthorized("JWT token is invalid or missing NetID claim.");
+            }
 
-        //     //    return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
-        //     return CreatedAtAction(nameof(GetTodoItem), new { id = todoItem.Id }, todoItem);
-        // }
+            // Get the user by NetID
+            var user = _authService.GetById(netIDClaim);
 
+            if (user is not null)
+            {
+                return Ok(user);
+            }
+
+            return NotFound("User not found.");
+        }
+
+        // Register a new user
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromForm] User user)
         {
-            // Validate the request data
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            // Save the user to the database
             var result = await _authService.RegisterAsync(user);
 
             if (result.Success)
@@ -59,33 +58,60 @@ namespace TimeTracker.Controllers{
                 return Ok($"User created successfully: {user.NetID}");
             }
 
-            Console.WriteLine($"Failed to register user: {user.NetID}");
             return BadRequest(result.Message);
         }
-        public class RegisterRequest
+
+        // Login a user and set JWT token in cookie
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromForm] LoginRequest request)
         {
-            public required string NetID { get; set; }
-            public required string Password { get; set; }
+            // Ensure NetID and Password are not null or empty
+            if (string.IsNullOrEmpty(request.NetID) || string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest(new { message = "NetID and Password must be provided." });
+            }
+
+            var result = await _authService.AuthenticateUser(request.NetID, request.Password);
+
+            if (result.Success)
+            {
+                Console.WriteLine($"Login successful for: {request.NetID}");
+
+                // Ensure the result.Message (JWT token) is not null
+                if (string.IsNullOrEmpty(result.Message))
+                {
+                    return StatusCode(500, new { message = "Failed to generate authentication token." });
+                }
+
+                // Set the JWT token in the cookie
+                Response.Cookies.Append("jwt", result.Message, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false, // Set to true in production for HTTPS
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddDays(3)
+                });
+
+                return Ok(new { message = "Login successful" });
+            }
+
+            // If authentication fails, return Unauthorized
+            return Unauthorized(new { message = result.Message });
         }
 
-    //     [HttpPost("login")]
-    //     public async Task<IActionResult> Login([FromForm] LoginRequest request)
-    //     {
-    //         var user = await _authService.AuthenticateUser(request.NetID, request.Password);
+        // Logout the user by removing the JWT cookie
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt");
+            return Ok(new { message = "Logout successful" });
+        }
 
-    //         if (user != null)
-    //         {
-    //             Console.WriteLine($"Login successful for: {request.NetID}");
-    //             return Ok();
-    //         }
-    //         Console.WriteLine($"Login failed for username: {request.NetID}");
-    //         return Unauthorized();
-    //     }
-    // }
-
-    // public class LoginRequest
-    // {
-    //     public string NetID { get; set; } = string.Empty; // or make it nullable with `string?`
-    //     public string Password { get; set; } = string.Empty;
+        // LoginRequest class for user login
+        public class LoginRequest
+        {
+            public string NetID { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
+        }
     }
 }

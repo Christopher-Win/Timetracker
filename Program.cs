@@ -1,9 +1,38 @@
 using Microsoft.EntityFrameworkCore;
 using TimeTracker.Data;
 using TimeTracker.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Get JWT settings from configuration
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var issuer = jwtSettings["Issuer"];
+var audience = jwtSettings["Audience"];
+var secretKey = jwtSettings["SecretKey"];
+
+// Ensure none of the settings are null or empty
+if (string.IsNullOrEmpty(secretKey))
+{
+    throw new ArgumentNullException(nameof(secretKey), "SecretKey cannot be null or empty.");
+}
+
+if (string.IsNullOrEmpty(issuer))
+{
+    throw new ArgumentNullException(nameof(issuer), "Issuer cannot be null or empty.");
+}
+
+if (string.IsNullOrEmpty(audience))
+{
+    throw new ArgumentNullException(nameof(audience), "Audience cannot be null or empty.");
+}
+
+// Convert the secret key to bytes
+var key = Encoding.UTF8.GetBytes(secretKey);
+
+// Add services to the container
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.ConfigureSwaggerGen(setup =>
@@ -14,23 +43,73 @@ builder.Services.ConfigureSwaggerGen(setup =>
         Version = "v1"
     });
 });
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+
+    // Read the token from the cookie
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var token = context.Request.Cookies["jwt"];
+            if (!string.IsNullOrEmpty(token))
+            {
+                context.Token = token;
+            }
+            return Task.CompletedTask;
+        },
+        OnAuthenticationFailed = context =>
+        {
+            Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+            return Task.CompletedTask;
+        },
+        OnTokenValidated = context =>
+        {
+            Console.WriteLine($"Token successfully validated");
+            return Task.CompletedTask;
+        }
+    };
+});
+
+// Register application services
 builder.Services.AddControllers();
-builder.Services.AddScoped<AuthService>();  // Register AuthService here
-builder.Services.AddScoped<TimeLogService>();  // Register TimeLogService here
+builder.Services.AddScoped<AuthService>();  
+builder.Services.AddScoped<TimeLogService>();  
 
+// Configure the database connection
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), 
+    options => options.EnableRetryOnFailure()));
 
+// Build the application
+var app = builder.Build();
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection"); // This should get the connection string from the appsettings.json file
-builder.Services.AddDbContext<ApplicationDBContext>(options => // This should register the DbContext with the DI container which will allow it to be injected into other classes
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options => options.EnableRetryOnFailure()));
-
-var app = builder.Build(); 
+// Configure Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 });
-// Configure the HTTP request pipeline.
+
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -38,11 +117,23 @@ if (app.Environment.IsDevelopment())
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
-    
 }
 
+// Enable HTTPS redirection
 app.UseHttpsRedirection();
 
+// Enable Authentication and Authorization middleware
+app.UseAuthentication();  // Process JWT tokens
+app.UseAuthorization();   // Enforce [Authorize] policies
 
-app.MapControllers(); // This should map my Controllers apis
+// Map controller routes
+app.MapControllers();
+
+// Configure cookie policy
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Strict,
+});
+
+// Run the application
 app.Run();
