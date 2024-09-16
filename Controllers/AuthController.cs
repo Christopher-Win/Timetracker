@@ -101,6 +101,7 @@ namespace TimeTracker.Controllers
 
         // Logout the user by removing the JWT cookie
         [HttpPost("logout")]
+        [Authorize]  // Ensure that the user is authenticated
         public IActionResult Logout()
         {
             Response.Cookies.Delete("jwt");
