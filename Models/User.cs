@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;  // For data annotations
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;  // For custom table or column settings
+using System.Text.Json.Serialization;
 
 namespace TimeTracker.Models
 {
@@ -16,7 +17,8 @@ namespace TimeTracker.Models
 
         [Required]
         [MaxLength(64)]  // SHA-256 hash is 64 characters long
-        public required string Password { get; set; }
+        [JsonIgnore]
+        public string Password { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;  // Default value for CreatedAt
         public List<TimeLog>? TimeLogs { get; set; }
