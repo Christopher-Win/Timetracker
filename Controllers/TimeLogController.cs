@@ -10,7 +10,7 @@ using static TimeTracker.Controllers.AuthController;
 namespace TimeTracker.Controllers{
 
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/timelogs")]
     public class TimeLogController : ControllerBase
     {
         private readonly TimeLogService _timeLogService;
