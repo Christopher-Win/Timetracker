@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Models;
 using TimeTracker.Models.Dto;
 using TimeTracker.Services;
-using static TimeTracker.Controllers.AuthController;
+using TimeTracker.Extensions;
 
 namespace TimeTracker.Controllers{
 
@@ -20,27 +20,14 @@ namespace TimeTracker.Controllers{
             _timeLogService = timeLogService;
             _authService = authService;
         }
-        private int GetCurrentUserId() // Helper method to get the current user's ID
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userIdClaim == null)
-            {
-                throw new UnauthorizedAccessException("User ID claim not found.");
-            }
-            var user = _authService.GetById(userIdClaim);
-            if (user == null)
-            {
-                throw new UnauthorizedAccessException("User not found.");
-            }
-            return user.Id;
-        }
 
         // GET: api/timelog -> returns all time logs for the logged in user.
         [HttpGet("")]
         [Authorize]
         public async Task<IActionResult> GetTimeLogs()
         {
-            var userId = GetCurrentUserId();
+            var userNetId = User.GetUserNetId();
+            int userId = _authService.GetByNetId(userNetId).Id;
             var timeLogs = await _timeLogService.GetTimeLogsForUser(userId);
             return Ok(timeLogs);
         }
@@ -50,7 +37,8 @@ namespace TimeTracker.Controllers{
         [Authorize]
         public async Task<IActionResult> GetCurrentTimeLog()
         {
-            var userId = GetCurrentUserId();
+            var userNetId = User.GetUserNetId();
+            int userId = _authService.GetByNetId(userNetId).Id;
             var timeLog = await _timeLogService.GetOrCreateTimeLogForCurrentWeek(userId);
             return Ok(timeLog);
         }
@@ -60,9 +48,10 @@ namespace TimeTracker.Controllers{
         [Authorize]
         public async Task<IActionResult> GetTimeLog(int id)
         {
-            var userId = GetCurrentUserId();
-            var timeLog = await _timeLogService.GetTimeLog(id);
-            if (timeLog == null)
+            var userNetId = User.GetUserNetId();
+            int userId = _authService.GetByNetId(userNetId).Id;
+            var timeLog = await _timeLogService.GetTimeLog(id); // Makes sure a user can only access their time logs.
+            if (timeLog == null || timeLog.UserId != userId)
             {
                 return NotFound("Time log not found.");
             }
@@ -78,10 +67,10 @@ namespace TimeTracker.Controllers{
             {
                 return BadRequest(ModelState);
             }
-            var netIDClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = _authService.GetById(netIDClaim);
+            var userNetId = User.GetUserNetId();
+            int userId = _authService.GetByNetId(userNetId).Id;
 
-            await _timeLogService.AddTimeLogEntryForCurrentWeek(user.Id, entryDto.StartTime, entryDto.EndTime, entryDto.Description);
+            await _timeLogService.AddTimeLogEntryForCurrentWeek(userId, entryDto.StartTime, entryDto.EndTime, entryDto.Description);
             return Ok("Time log entry added for the current week.");
         }
 
@@ -91,7 +80,7 @@ namespace TimeTracker.Controllers{
         [Authorize]
         public async Task<IActionResult> GetTimeLogEntries(int timeLogId)
         {
-            var userId = GetCurrentUserId();
+            var userNetId = User.GetUserNetId();
             
             var timeLogEntries = await _timeLogService.GetTimeLogEntries(timeLogId);
             // Console.WriteLine("Data requested by " + user.NetID);

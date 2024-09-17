@@ -63,7 +63,8 @@ namespace TimeTracker.Services{
                 Id = timeLog.Id,
                 UserId = timeLog.UserId,
                 Title = timeLog.Title,
-                CreatedAt = timeLog.CreatedAt
+                CreatedAt = timeLog.CreatedAt,
+                TimeLogEntries = await GetTimeLogEntries(timeLog.Id)
             };
 
             return timeLogDto;
@@ -82,7 +83,8 @@ namespace TimeTracker.Services{
                     Id = existingTimeLog.Id,
                     UserId = existingTimeLog.UserId,
                     Title = existingTimeLog.Title,
-                    CreatedAt = existingTimeLog.CreatedAt
+                    CreatedAt = existingTimeLog.CreatedAt,
+                    TimeLogEntries = await GetTimeLogEntries(existingTimeLog.Id)
                 };
                 return timeLogDto;
             }
@@ -132,22 +134,24 @@ namespace TimeTracker.Services{
             var timeEntries = await _context.TimeLogEntries
             .Where(t => t.TimeLogId == timeLogId)
             .ToListAsync();
-
-            var timeLogEntryDtos = new List<TimeLogEntryDto>(); // Create a list to store TimeLogEntryDto objects
-
+        
+            var timeLogEntryDtos = new List<TimeLogEntryDto>(); // Create a list to store TimeLogEntry objects
+        
             foreach (var entry in timeEntries)
             {
                 var timeLogEntryDto = new TimeLogEntryDto
                 {
+                    Id = entry.Id,
                     StartTime = entry.StartTime,
                     EndTime = entry.EndTime,
                     Duration = (int)(entry.EndTime - entry.StartTime).TotalMinutes,
+                    CreatedAt = entry.CreatedAt,
                     Description = entry.Description
                 };
             timeLogEntryDtos.Add(timeLogEntryDto);
             }
-
-            return timeLogEntryDtos; // Return a list of TimeLogEntryDto objects
+        
+            return timeLogEntryDtos; // Return a list of TimeLogEntry objects
         }
 
     }

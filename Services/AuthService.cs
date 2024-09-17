@@ -29,7 +29,7 @@ namespace TimeTracker.Services
         }
 
         // Retrieve user by NetID
-        public User? GetById(string id)
+        public User? GetByNetId(string id)
         {
             return _context.Users.FirstOrDefault(u => u.NetID == id);
         }

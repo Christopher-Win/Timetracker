@@ -7,5 +7,7 @@ namespace TimeTracker.Models.Dto{
         public int UserId { get; set; }  // Foreign key to User
         public required string Title { get; set; }  // Optional: Could represent the log title (e.g., "Project A")
         public DateTime CreatedAt { get; set; }
+        public List<TimeLogEntryDto>? TimeLogEntries { get; set; }  // Navigation property to TimeLogEntries
+
     }
 }

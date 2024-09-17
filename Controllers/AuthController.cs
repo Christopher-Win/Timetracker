@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Models;
 using TimeTracker.Services;
 using System.Security.Claims;
+using TimeTracker.Extensions;
 
 namespace TimeTracker.Controllers
 {
@@ -23,15 +24,11 @@ namespace TimeTracker.Controllers
         public ActionResult<User> GetUserFromJwt()
         {
             // Extract the NetID from the authenticated user's claims
-            var netIDClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var netIDClaim = User.GetUserNetId();
 
-            if (string.IsNullOrEmpty(netIDClaim))
-            {
-                return Unauthorized("JWT token is invalid or missing NetID claim.");
-            }
-
+        
             // Get the user by NetID
-            var user = _authService.GetById(netIDClaim);
+            var user = _authService.GetByNetId(netIDClaim);
 
             if (user is not null)
             {
