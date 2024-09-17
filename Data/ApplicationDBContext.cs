@@ -29,6 +29,7 @@ namespace TimeTracker.Data
                 .HasMany(t => t.TimeLogEntries)
                 .WithOne(e => e.TimeLog)
                 .HasForeignKey(e => e.TimeLogId);
+           
         }
     }
 }

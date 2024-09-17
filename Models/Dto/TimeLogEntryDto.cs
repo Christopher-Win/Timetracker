@@ -5,9 +5,6 @@ namespace TimeTracker.Models.Dto{
     public class TimeLogEntryDto
     {
         [Required]
-        public int userId { get; set; }
-        
-        [Required]
         public DateTime StartTime { get; set; }
 
         [Required]
@@ -15,5 +12,6 @@ namespace TimeTracker.Models.Dto{
 
         [Required]
         public string Description { get; set; }
+        public int Duration { get; internal set; } 
     }
 }
