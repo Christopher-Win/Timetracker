@@ -14,14 +14,16 @@ namespace TimeTracker.Models
 
         [Required]
         public required string NetID { get; set; }
+        public string Role { get; set; } = "Student";
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
         [Required]
         [MaxLength(64)]  // SHA-256 hash is 64 characters long
         [JsonIgnore]
-        public string Password { get; set; }
+        public string Password { get; set; } // Default password UTDID
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;  // Default value for CreatedAt
         public List<TimeLog>? TimeLogs { get; set; }
-
     }
 }

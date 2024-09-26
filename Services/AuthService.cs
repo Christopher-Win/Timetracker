@@ -50,7 +50,10 @@ namespace TimeTracker.Services
             {
                 NetID = newUser.NetID,
                 Password = hashedPassword,
-                CreatedAt = DateTime.Now
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName,
+                CreatedAt = DateTime.Now,
+                Role = newUser.Role
             };
 
             // Add the new user to the database

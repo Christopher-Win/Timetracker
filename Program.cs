@@ -4,6 +4,8 @@ using TimeTracker.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using TimeTracker.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,6 +94,8 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddControllers();
 builder.Services.AddScoped<AuthService>();  
 builder.Services.AddScoped<TimeLogService>();  
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
 // Configure the database connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -113,6 +117,7 @@ app.UseSwaggerUI(c =>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
+    
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
