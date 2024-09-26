@@ -72,11 +72,42 @@ namespace TimeTracker.Services
             {
                 return new Result { Success = false, Message = "Invalid NetID or Password." };
             }
-
             // Generate JWT token upon successful authentication
             var token = GenerateJwtToken(user);
+            if (user.IsDefaultPassword) // Check if the user has their default password
+            {
+                return new Result
+                {
+                    Success = true,
+                    Message = token,
+                    RequiresPasswordChange = true // Set a flag in the response
+                };
+            }
+            return new Result { Success = true, Message = token, RequiresPasswordChange = false };
+        }
 
-            return new Result { Success = true, Message = token };
+        public async Task<Result> UpdatePasswordAsync(string netID, string password)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.NetID == netID);
+            if (user == null)
+            {
+                return new Result { Success = false, Message = "User not found." };
+            }
+            // Check if the new password is the same as the old password
+            if (user.Password==password)
+            {
+                return new Result { Success = false, Message = "New password cannot be the same as the old password." };
+            }
+            // Hash the new password
+            var hashedPassword = HashPassword(password);
+
+            // Update the user's password
+            user.Password = hashedPassword;
+            user.IsDefaultPassword = false; // Set to false after changing the password
+
+            await _context.SaveChangesAsync(); // Save changes to the database
+
+            return new Result { Success = true }; // Return success result
         }
 
         // Generate JWT token
@@ -122,6 +153,7 @@ namespace TimeTracker.Services
         {
             public bool Success { get; set; }
             public string? Message { get; set; } // Mark Message as nullable
+            public bool RequiresPasswordChange { get; set; } // Add a flag for password change
         }
     }
 }

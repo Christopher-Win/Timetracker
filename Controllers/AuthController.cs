@@ -4,6 +4,7 @@ using TimeTracker.Models;
 using TimeTracker.Services;
 using System.Security.Claims;
 using TimeTracker.Extensions;
+using Mysqlx.Crud;
 
 namespace TimeTracker.Controllers
 {
@@ -25,7 +26,6 @@ namespace TimeTracker.Controllers
         {
             // Extract the NetID from the authenticated user's claims
             var netIDClaim = User.GetUserNetId();
-
         
             // Get the user by NetID
             var user = _authService.GetByNetId(netIDClaim);
@@ -88,7 +88,12 @@ namespace TimeTracker.Controllers
                     SameSite = SameSiteMode.Strict,
                     Expires = DateTime.UtcNow.AddDays(3)
                 });
-
+                
+                if (result.RequiresPasswordChange)
+                {
+                    Console.WriteLine($"User {request.NetID} requires password change.");
+                    return Ok(new { message = "Login successful", requiresPasswordChange = true });
+                }
                 return Ok(new { message = "Login successful" });
             }
 
@@ -96,6 +101,29 @@ namespace TimeTracker.Controllers
             return Unauthorized(new { message = result.Message });
         }
 
+        [HttpPatch("update-password")]
+        [Authorize]  // Ensure that the user is authenticated
+        public async Task<IActionResult> UpdatePassword([FromForm] UpdatePasswordRequest request)
+        {
+            // Extract the NetID from the authenticated user's claims
+            var netIDClaim = User.GetUserNetId();
+        
+            // Get the user by NetID
+            var user = _authService.GetByNetId(netIDClaim);
+
+            if (user is null)
+            {
+                return NotFound("User not found.");
+            }
+            //Attempt to update the password
+            var result = await _authService.UpdatePasswordAsync(user.NetID, request.Password); 
+            // Check if the update was successful
+            if (!result.Success)
+            {
+                return BadRequest(new { message = result.Message }); // Return error message
+            }
+            return Ok(new { message = "Password updated successfully" }); // Return success message
+        }
         // Logout the user by removing the JWT cookie
         [HttpPost("logout")]
         [Authorize]  // Ensure that the user is authenticated
@@ -106,6 +134,10 @@ namespace TimeTracker.Controllers
         }
 
         // LoginRequest class for user login
+        public class UpdatePasswordRequest
+        {
+            public string Password { get; set; } = string.Empty;
+        }
         public class LoginRequest
         {
             public string NetID { get; set; } = string.Empty;

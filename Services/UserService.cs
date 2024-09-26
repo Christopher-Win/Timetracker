@@ -13,8 +13,9 @@ public class UserService : IUserService
 
     public UserService(ApplicationDBContext context)
     {
-        _context = context;
+        _context = context; // Inject the database context
     }
+    
     public async Task<User> GetUserByNetIdAsync(string netId)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.NetID == netId);
@@ -25,6 +26,7 @@ public class UserService : IUserService
             return user;
         }
 
+    // Upload a file with user data and create user accounts in the database
     public async Task ImportUsersFromFileAsync(IFormFile file)
     {
         using var stream = file.OpenReadStream();
@@ -46,7 +48,6 @@ public class UserService : IUserService
 
             var values = line.Split('\t'); // Use Split to get each value in the line
             Console.WriteLine($"LastName: {values[0].Trim()}, FirstName: {values[1].Trim()}, NetID: {values[2].Trim()}, UTDID: {values[3].Trim()}");
-            Console.WriteLine($"Length: {values.Length}");
             if (values.Length != 4)
             {
                 // Optionally log or skip invalid lines
