@@ -84,13 +84,14 @@ namespace TimeTracker.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_secretKey);
-
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, user.NetID),
+                new(ClaimTypes.Role, user.Role) // Add the Role claim here
+            };
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, user.NetID)
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddDays(Convert.ToInt32(_expiry)), // Token expiration
                 Issuer = _issuer,
                 Audience = _audience,
