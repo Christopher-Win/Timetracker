@@ -27,7 +27,13 @@ namespace TimeTracker.Controllers{
         public async Task<IActionResult> GetTimeLogs()
         {
             var userNetId = User.GetUserNetId();
-            int userId = _authService.GetByNetId(userNetId).Id;
+            var user = _authService.GetByNetId(userNetId);
+            if (user == null)
+            {
+                return Unauthorized("User not found or not authorized.");
+            }
+
+            int userId = user.Id;
             var timeLogs = await _timeLogService.GetTimeLogsForUser(userId);
             return Ok(timeLogs);
         }
@@ -38,7 +44,13 @@ namespace TimeTracker.Controllers{
         public async Task<IActionResult> GetCurrentTimeLog()
         {
             var userNetId = User.GetUserNetId();
-            int userId = _authService.GetByNetId(userNetId).Id;
+            var user = _authService.GetByNetId(userNetId);
+            if (user == null)
+            {
+                return Unauthorized("User not found or not authorized.");
+            }
+
+            int userId = user.Id;
             var timeLog = await _timeLogService.GetOrCreateTimeLogForCurrentWeek(userId);
             return Ok(timeLog);
         }
@@ -49,7 +61,13 @@ namespace TimeTracker.Controllers{
         public async Task<IActionResult> GetTimeLog(int id)
         {
             var userNetId = User.GetUserNetId();
-            int userId = _authService.GetByNetId(userNetId).Id;
+            var user = _authService.GetByNetId(userNetId);
+            if (user == null)
+            {
+                return Unauthorized("User not found or not authorized.");
+            }
+
+            int userId = user.Id;
             var timeLog = await _timeLogService.GetTimeLog(id); // Makes sure a user can only access their time logs.
             if (timeLog == null || timeLog.UserId != userId)
             {
@@ -68,7 +86,13 @@ namespace TimeTracker.Controllers{
                 return BadRequest(ModelState);
             }
             var userNetId = User.GetUserNetId();
-            int userId = _authService.GetByNetId(userNetId).Id;
+            var user = _authService.GetByNetId(userNetId);
+            if (user == null)
+            {
+                return Unauthorized("User not found or not authorized.");
+            }
+
+            int userId = user.Id;
 
             await _timeLogService.AddTimeLogEntryForCurrentWeek(userId, entryDto.StartTime, entryDto.EndTime, entryDto.Description);
             return Ok("Time log entry added for the current week.");
@@ -87,5 +111,60 @@ namespace TimeTracker.Controllers{
             return Ok(timeLogEntries);
         }
 
-    }
-}
+        // PATCH: api/timelog/entry/{id} -> updates a time log entry for the logged-in user.
+        [HttpPatch("entry/{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateTimeLogEntry(int id, [FromForm] TimeLogEntryDto entryDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            var userNetId = User.GetUserNetId();
+            var user = _authService.GetByNetId(userNetId);
+            if (user == null)
+            {
+                return Unauthorized("User not found or not authorized.");
+            }
+
+            int userId = user.Id;
+            
+            var timeLogEntry = await _timeLogService.GetTimeLogEntry(id);
+            if (timeLogEntry == null || timeLogEntry.TimeLog.UserId != userId)
+            {
+                return NotFound("Time log entry not found.");
+            }
+
+            // Update the time log entry
+            await _timeLogService.UpdateTimeLogEntry(id, entryDto.StartTime, entryDto.EndTime, entryDto.Description);
+            return Ok("Time log entry updated.");
+        }
+
+            // DELETE: api/timelog/entry/{id} -> deletes a time log entry for the logged-in user.
+            [HttpDelete("entry/{id}")]
+            [Authorize]
+            public async Task<IActionResult> DeleteTimeLogEntry(int id)
+            {
+                var userNetId = User.GetUserNetId();
+                var user = _authService.GetByNetId(userNetId);
+                if (user == null)
+                {
+                    return Unauthorized("User not found or not authorized.");
+                }
+
+                int userId = user.Id;
+                
+                var timeLogEntry = await _timeLogService.GetTimeLogEntry(id);
+                if (timeLogEntry == null || timeLogEntry.TimeLog.UserId != userId)
+                {
+                    return NotFound("Time log entry not found.");
+                }
+
+                // Delete the time log entry
+                await _timeLogService.DeleteTimeLogEntry(id);
+                return Ok("Time log entry deleted.");
+            }
+
+            }
+        }
