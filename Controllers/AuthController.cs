@@ -68,7 +68,7 @@ namespace TimeTracker.Controllers
                 return BadRequest(new { message = "NetID and Password must be provided." });
             }
 
-            var result = await _authService.AuthenticateUser(request.NetID, request.Password);
+            var result = await _authService.AuthenticateUser(request.NetID, request.Password); // Result will contain the JWT token in the Message property
 
             if (result.Success)
             {
@@ -80,27 +80,27 @@ namespace TimeTracker.Controllers
                     return StatusCode(500, new { message = "Failed to generate authentication token." });
                 }
 
-                // Set the JWT token in the cookie
+                // Set the JWT token in the cookies
                 Response.Cookies.Append("jwt", result.Message, new CookieOptions
                 {
                     HttpOnly = true,
                     Secure = false, // Set to true in production for HTTPS
-                    SameSite = SameSiteMode.Strict,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(3)
                 });
-                
+                // Check if the user requires a password change.
                 if (result.RequiresPasswordChange)
                 {
                     Console.WriteLine($"User {request.NetID} requires password change.");
-                    return Ok(new { message = "Login successful", requiresPasswordChange = true });
+                    return Ok(new { message = "Login successful", requiresPasswordChange = true }); // Return success message and indicate that the user requires a password change
                 }
-                return Ok(new { message = "Login successful" });
+                return Ok(new { message = "Login successful", requiresPasswordChange = false }); // Return success message and indicate that the user does not require a password change
             }
 
             // If authentication fails, return Unauthorized
-            return Unauthorized(new { message = result.Message });
+            return Unauthorized(new { message = result.Message }); 
         }
-
+        // PATCH /api/Auth/update-password endpoint to update the user's password
         [HttpPatch("update-password")]
         [Authorize]  // Ensure that the user is authenticated
         public async Task<IActionResult> UpdatePassword([FromForm] UpdatePasswordRequest request)
@@ -129,11 +129,11 @@ namespace TimeTracker.Controllers
         [Authorize]  // Ensure that the user is authenticated
         public IActionResult Logout()
         {
-            Response.Cookies.Delete("jwt");
+            Response.Cookies.Delete("jwt"); // Remove the JWT cookie from the client's cookies ie., log the user out
             return Ok(new { message = "Logout successful" });
         }
 
-        // LoginRequest class for user login
+        // Request to reset the user's password
         public class UpdatePasswordRequest
         {
             public string Password { get; set; } = string.Empty;

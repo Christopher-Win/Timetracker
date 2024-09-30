@@ -29,13 +29,13 @@ public class UserService : IUserService
     // Upload a file with user data and create user accounts in the database
     public async Task ImportUsersFromFileAsync(IFormFile file)
     {
-        using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-        var users = new List<User>();
+        using var stream = file.OpenReadStream(); // Open a stream to read the file
+        using var reader = new StreamReader(stream); // Create a StreamReader to read the stream
+        var users = new List<User>(); // Create a list to store the new users
         
         bool isFirstLine = true;
 
-        while (!reader.EndOfStream)
+        while (!reader.EndOfStream) // Loop until the end of the file
         {
            
             var line = await reader.ReadLineAsync(); // Read a line from the file

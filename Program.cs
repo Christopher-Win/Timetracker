@@ -96,6 +96,14 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TimeLogService>();  
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontendApp",
+        builder => builder.WithOrigins("http://127.0.0.1:5500")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials());  // Use if credentials (cookies) are being sent
+});
 
 // Configure the database connection
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -107,6 +115,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 var app = builder.Build();
 
 // Configure Swagger UI
+app.UseCors("AllowFrontendApp");
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {

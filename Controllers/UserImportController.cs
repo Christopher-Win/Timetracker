@@ -4,12 +4,12 @@ using TimeTracker.Services;
 
 namespace TimeTracker.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")] // Ensure that the user is authenticated and has the Admin role
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] // Base route-> api/UserImport
     public class UserImportController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IUserService _userService; 
 
         public UserImportController(IUserService userService)
         {
@@ -25,7 +25,7 @@ namespace TimeTracker.Controllers
 
             try
             {
-                await _userService.ImportUsersFromFileAsync(file);
+                await _userService.ImportUsersFromFileAsync(file); // Call the service method to import users
                 return Ok(new { message = "Users imported successfully." });
             }
             catch (InvalidOperationException ex)
