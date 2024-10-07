@@ -17,14 +17,14 @@ public class UserService : IUserService
     }
     
     public async Task<User> GetUserByNetIdAsync(string netId)
-        {
+    {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.NetID == netId);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found.");
             }
             return user;
-        }
+    }
 
     // Upload a file with user data and create user accounts in the database
     public async Task ImportUsersFromFileAsync(IFormFile file)
@@ -88,6 +88,17 @@ public class UserService : IUserService
         }
     }
 
+    public async Task<bool> UpdateUserGroupAsync(string netId, int group)
+    {
+        var user = await _context.Users.SingleOrDefaultAsync(u => u.NetID == netId); // Find the user by NetID
+        if (user == null)
+        {
+            return false; // User not found
+        }
+        user.Group = group; // Update the user's group
+        await _context.SaveChangesAsync(); // Save changes
+        return true;
+    }
     // Other service methods...
      public static string HashPassword(string password) // Hash the password using SHA-256
         {
