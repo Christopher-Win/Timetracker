@@ -94,7 +94,7 @@ namespace TimeTracker.Services
                 return new Result { Success = false, Message = "User not found." };
             }
             // Check if the new password is the same as the old password
-            if (user.Password==password)
+            if (user.Password==HashPassword(password))
             {
                 return new Result { Success = false, Message = "New password cannot be the same as the old password." };
             }
