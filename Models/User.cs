@@ -15,6 +15,9 @@ namespace TimeTracker.Models
         [Required]
         public required string NetID { get; set; }
         public string Role { get; set; } = "Student";
+        
+        [Required]
+        public int Group { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
