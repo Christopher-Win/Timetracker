@@ -9,6 +9,9 @@ namespace TimeTracker.Services
         Task ImportUsersFromFileAsync(IFormFile file);
         Task<User> GetUserByNetIdAsync(string netId);
         Task<bool> UpdateUserGroupAsync(string netId, int group);
+        Task<List<User>> GetUsersByGroupAsync(int group);
+        Task<List<User>> GetAllUsersAsync();
+
         // Other user-related methods...
     }
 }

@@ -99,6 +99,19 @@ public class UserService : IUserService
         await _context.SaveChangesAsync(); // Save changes
         return true;
     }
+
+    // Get all users in a group
+    public async Task<List<User>> GetUsersByGroupAsync(int group)
+    {
+        return await _context.Users.Where(u => u.Group == group).ToListAsync();
+    }
+    
+    // Get all users
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+    return await _context.Users.ToListAsync();
+    }
+    
     // Other service methods...
      public static string HashPassword(string password) // Hash the password using SHA-256
         {

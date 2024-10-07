@@ -53,7 +53,8 @@ namespace TimeTracker.Services
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
                 CreatedAt = DateTime.Now,
-                Role = newUser.Role
+                Role = newUser.Role ?? "Student", // Default role if not provided
+                Group = newUser.Group, // Assign group during registration
             };
 
             // Add the new user to the database

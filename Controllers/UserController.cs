@@ -53,6 +53,48 @@ namespace TimeTracker.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("group/{groupId}")]
+        public async Task<IActionResult> GetUsersByGroup(int groupId)
+        {
+            var users = await _userService.GetUsersByGroupAsync(groupId);
+
+            if (users == null || !users.Any())
+            {
+                return NotFound("No users found in this group.");
+            }
+
+            return Ok(users);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("group/{netId}")]
+        public async Task<IActionResult> RemoveUserFromGroup(string netId)
+        {
+            var result = await _userService.UpdateUserGroupAsync(netId, 0); // Assuming '0' is a default for 'no group'
+
+            if (result)
+            {
+                return Ok("User removed from group successfully.");
+            }
+
+            return NotFound("User not found.");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+
+            if (users == null || !users.Any())
+            {
+                return NotFound("No users found.");
+            }
+
+            return Ok(users);
+        }
         
     }
 }
