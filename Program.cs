@@ -74,6 +74,11 @@ builder.Services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(token))
             {
                 context.Token = token;
+                Console.WriteLine("JWT token found in cookie");
+            }
+            else
+            {
+                Console.WriteLine("JWT token not found in cookie");
             }
             return Task.CompletedTask;
         },
@@ -84,7 +89,7 @@ builder.Services.AddAuthentication(options =>
         },
         OnTokenValidated = context =>
         {
-            Console.WriteLine($"Token successfully validated");
+            Console.WriteLine("Token successfully validated");
             return Task.CompletedTask;
         }
     };
@@ -99,10 +104,10 @@ builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendApp",
-        builder => builder.WithOrigins("http://127.0.0.1:5500")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod()
-                          .AllowCredentials());  // Use if credentials (cookies) are being sent
+        builder => builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials());  // Use if credentials (cookies) are being sent  // Use if credentials (cookies) are being sent
 });
 
 // Configure the database connection
@@ -146,7 +151,7 @@ app.MapControllers();
 // Configure cookie policy
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.Strict,
+    MinimumSameSitePolicy = SameSiteMode.Lax,
 });
 
 // Run the application
