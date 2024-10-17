@@ -85,7 +85,7 @@ namespace TimeTracker.Controllers
                 {
                     HttpOnly = true,
                     Secure = false, // Set to true in production for HTTPS
-                    SameSite = SameSiteMode.Lax,
+                    SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(3)
                 });
                 // Check if the user requires a password change.
