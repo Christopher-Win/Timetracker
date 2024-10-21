@@ -28,5 +28,9 @@ namespace TimeTracker.Models
         public bool IsDefaultPassword { get; set; } = true; // Default to true for new users
         public DateTime CreatedAt { get; set; } = DateTime.Now;  // Default value for CreatedAt
         public List<TimeLog>? TimeLogs { get; set; }
+        public ICollection<PeerReview>? ReviewsGiven { get; set; }
+
+    // Reviews that the user has received (from other students)
+        public ICollection<PeerReview>? ReviewsReceived { get; set; }
     }
 }
