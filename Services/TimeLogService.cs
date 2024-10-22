@@ -170,24 +170,26 @@ namespace TimeTracker.Services{
             }
         }
 
-            // Method to delete a specific TimeLogEntry
-            public async Task DeleteTimeLogEntry(int timeLogEntryId)
+        // Method to delete a specific TimeLogEntry
+        public async Task DeleteTimeLogEntry(int timeLogEntryId)
+        {
+            var timeLogEntry = await _context.TimeLogEntries.FindAsync(timeLogEntryId);
+
+            if (timeLogEntry != null)
             {
-                var timeLogEntry = await _context.TimeLogEntries.FindAsync(timeLogEntryId);
-
-                if (timeLogEntry != null)
-                {
-                    _context.TimeLogEntries.Remove(timeLogEntry);
-                    await _context.SaveChangesAsync();
-                }
+                _context.TimeLogEntries.Remove(timeLogEntry);
+                await _context.SaveChangesAsync();
             }
+        }
 
-            // Method to get a specific TimeLogEntry
-            public async Task<TimeLogEntry?> GetTimeLogEntry(int timeLogEntryId)
-            {
-                return await _context.TimeLogEntries.Include(t => t.TimeLog)
-                    .SingleOrDefaultAsync(t => t.Id == timeLogEntryId);
-            }
+        // Method to get a specific TimeLogEntry
+        public async Task<TimeLogEntry?> GetTimeLogEntry(int timeLogEntryId)
+        {
+            return await _context.TimeLogEntries.Include(t => t.TimeLog)
+                .SingleOrDefaultAsync(t => t.Id == timeLogEntryId);
+        }
 
+        // Admin method to get all TimeLogs
+        
     }
 }

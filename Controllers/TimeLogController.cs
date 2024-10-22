@@ -21,8 +21,8 @@ namespace TimeTracker.Controllers{
             _authService = authService;
         }
 
-        // GET: api/timelog -> returns all time logs for the logged in user.
-        [HttpGet("")]
+        // GET: api/timelog/me -> returns all time logs for the logged in user.
+        [HttpGet("me")]
         [Authorize]
         public async Task<IActionResult> GetTimeLogs()
         {

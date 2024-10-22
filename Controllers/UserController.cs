@@ -96,6 +96,14 @@ namespace TimeTracker.Controllers
             return Ok(users);
         }
         
+        // [Authorize(Roles = "Admin")]
+        [HttpGet("groups")]
+        public async Task<IActionResult> GetUsersByGroupAsync()
+        {
+            var groups = await _userService.GetUsersByGroupAsync();
+
+            return Ok(groups);
+        }
     }
 }
     
