@@ -11,7 +11,8 @@ namespace TimeTracker.Services
         Task<bool> UpdateUserGroupAsync(string netId, int group);
         Task<List<User>> GetUsersByGroupAsync(int group);
         Task<List<User>> GetAllUsersAsync();
-
+        Task<Dictionary<int, List<User>>> GetUsersByGroupAsync();
+       
         // Other user-related methods...
     }
 }

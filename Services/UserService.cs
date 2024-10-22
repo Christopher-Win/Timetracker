@@ -100,18 +100,49 @@ public class UserService : IUserService
         return true;
     }
 
+
     // Get all users in a group
     public async Task<List<User>> GetUsersByGroupAsync(int group)
     {
-        return await _context.Users.Where(u => u.Group == group).ToListAsync();
+        return await _context.Users.Where(u => u.Group == group).ToListAsync(); // 
     }
     
     // Get all users
     public async Task<List<User>> GetAllUsersAsync()
     {
-    return await _context.Users.ToListAsync();
+        return await _context.Users.ToListAsync();
     }
-    
+    // Get all the users in the database and put each user into an array based on their group.
+    public async Task<Dictionary<int, List<User>>> GetUsersByGroupAsync() // Get all users in the database and group them by group number
+    {
+        var users = await _context.Users
+        .Include(u => u.TimeLogs) // Eagerly load the TimeLogs for each user
+        .ThenInclude(t => t.TimeLogEntries) // Eagerly load the TimeLogEntries for each TimeLog
+        .ToListAsync();
+
+        var groups = new Dictionary<int, List<User>>();
+        foreach (var user in users) // Loop through each user
+        {
+            // Console.WriteLine($"User: {user.NetID}, Group: {user.Group}");
+            if (!groups.ContainsKey(user.Group))
+            {
+                groups[user.Group] = new List<User>(); // Create a new list for the group if it doesn't exist
+            }
+            groups[user.Group].Add(user); // Add the user to the appropriate group list
+        }
+        
+        foreach (var group in groups) // Loop through each group and print the users in the group
+        {
+            Console.WriteLine($"Group: {group.Key}");
+            foreach (var user in group.Value) // Loop through each user in the group
+            {
+                Console.WriteLine($"User: {user.NetID}, FirstName: {user.FirstName}, LastName: {user.LastName}");
+            }
+        }
+        
+        return groups;
+    }
+
     // Other service methods...
      public static string HashPassword(string password) // Hash the password using SHA-256
         {
