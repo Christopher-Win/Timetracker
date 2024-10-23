@@ -7,7 +7,6 @@ namespace TimeTracker.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
     public class PeerReviewQuestionController : ControllerBase
     {
         private readonly IPeerReviewQuestionService _peerReviewQuestionService;
@@ -39,6 +38,7 @@ namespace TimeTracker.Controllers
 
         // POST: api/peerreviewquestion
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreatePeerReviewQuestion([FromForm] PeerReviewQuestion peerReviewQuestion)
         {
             if (peerReviewQuestion == null || string.IsNullOrEmpty(peerReviewQuestion.QuestionText))
