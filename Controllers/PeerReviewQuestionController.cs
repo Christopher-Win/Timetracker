@@ -39,7 +39,7 @@ namespace TimeTracker.Controllers
 
         // POST: api/peerreviewquestion
         [HttpPost]
-        public async Task<IActionResult> CreatePeerReviewQuestion([FromBody] PeerReviewQuestion peerReviewQuestion)
+        public async Task<IActionResult> CreatePeerReviewQuestion([FromForm] PeerReviewQuestion peerReviewQuestion)
         {
             if (peerReviewQuestion == null || string.IsNullOrEmpty(peerReviewQuestion.QuestionText))
             {

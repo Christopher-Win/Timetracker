@@ -36,7 +36,7 @@ namespace TimeTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePeerReview([FromBody] PeerReview peerReview)
+        public async Task<IActionResult> CreatePeerReview([FromForm] PeerReview peerReview)
         {
             try
             {

@@ -101,6 +101,8 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TimeLogService>();  
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IPeerReviewQuestionService, PeerReviewQuestionService>();
+builder.Services.AddScoped<IPeerReviewService, PeerReviewService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontendApp",
