@@ -43,8 +43,14 @@ namespace TimeTracker.Controllers
                 // Retrieve the current user's NetID from the claims (authenticated user)
                 var currentNetId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+                if(string.IsNullOrEmpty(currentNetId))
+                {
+                    return Unauthorized("User ID not found in the token.");
+                }
+
                 // Ensure current user exists
                 var currentUser = await _userService.GetUserByNetIdAsync(currentNetId);
+                
                 if (currentUser == null)
                 {
                     return Unauthorized("Current user not found.");
