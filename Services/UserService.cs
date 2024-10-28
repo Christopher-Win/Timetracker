@@ -144,18 +144,18 @@ public class UserService : IUserService
     }
 
         // Method to check if two users are in the same group
-        public async Task<bool> AreUsersInSameGroupAsync(int reviewerId, int revieweeId)
+    public async Task<bool> AreUsersInSameGroupAsync(string reviewerNetId, string revieweeNetId)
+    {
+        var reviewer = await GetUserByNetIdAsync(reviewerNetId);
+        var reviewee = await GetUserByNetIdAsync(revieweeNetId);
+
+        if (reviewer == null || reviewee == null)
         {
-            var reviewer = await _context.Users.FindAsync(reviewerId);
-            var reviewee = await _context.Users.FindAsync(revieweeId);
-
-            if (reviewer == null || reviewee == null)
-            {
-                return false; // Either user not found
-            }
-
-            return reviewer.Group == reviewee.Group;
+            return false; // Either user not found
         }
+
+        return reviewer.Group == reviewee.Group;
+    }
 
     // Other service methods...
      public static string HashPassword(string password) // Hash the password using SHA-256

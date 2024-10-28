@@ -3,6 +3,7 @@ using System.Security.Claims;
 using TimeTracker.Models;
 using TimeTracker.Services;
 using Microsoft.AspNetCore.Authorization;
+using TimeTracker.Models.Dto;
 
 namespace TimeTracker.Controllers
 {
@@ -36,16 +37,16 @@ namespace TimeTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePeerReview([FromForm] PeerReview peerReview)
+        public async Task<IActionResult> CreatePeerReview([FromForm] CreatePeerReviewDTO peerReviewDto)
         {
             try
             {
                 // Retrieve the current user's NetID from the claims (authenticated user)
                 var currentNetId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-                if(string.IsNullOrEmpty(currentNetId))
+                if (string.IsNullOrEmpty(currentNetId))
                 {
-                    return Unauthorized("User ID not found in the token.");
+                    return Unauthorized("User NetID not found in the token.");
                 }
 
                 // Ensure current user exists
@@ -56,11 +57,25 @@ namespace TimeTracker.Controllers
                     return Unauthorized("Current user not found.");
                 }
 
-                // Automatically assign the reviewerId as the current authenticated user's ID
-                peerReview.ReviewerId = currentUser.Id;
+                // Create a new PeerReview instance and assign necessary properties
+                var peerReview = new PeerReview
+                {
+                    ReviewerId = currentUser.NetID,
+                    Reviewer = currentUser,
+                    RevieweeId = peerReviewDto.RevieweeId,
+                    Reviewee = await _userService.GetUserByNetIdAsync(peerReviewDto.RevieweeId),
+                    StartDate = peerReviewDto.StartDate,
+                    EndDate = peerReviewDto.EndDate,
+                    PeerReviewAnswers = peerReviewDto.PeerReviewAnswers
+                };
+
+                if (peerReview.Reviewee == null)
+                {
+                    return BadRequest("The reviewee does not exist.");
+                }
 
                 // Validate that the reviewer and reviewee are in the same group
-                var areInSameGroup = await _userService.AreUsersInSameGroupAsync(currentUser.Id, peerReview.RevieweeId);
+                var areInSameGroup = await _userService.AreUsersInSameGroupAsync(currentUser.NetID, peerReview.RevieweeId);
                 if (!areInSameGroup)
                 {
                     return BadRequest("You can only review users in the same group.");

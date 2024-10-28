@@ -12,7 +12,7 @@ namespace TimeTracker.Services
         Task<List<User>> GetUsersByGroupAsync(int group);
         Task<List<User>> GetAllUsersAsync();
         Task<Dictionary<int, List<User>>> GetUsersByGroupAsync();
-        Task<bool> AreUsersInSameGroupAsync(int reviewerId, int revieweeId);
+        Task<bool> AreUsersInSameGroupAsync(string reviewerNetId, string revieweeNetId);
        
         // Other user-related methods...
     }

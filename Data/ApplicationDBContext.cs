@@ -21,6 +21,10 @@ namespace TimeTracker.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Configure NetID as an alternate key in User
+            modelBuilder.Entity<User>()
+                .HasAlternateKey(u => u.NetID);
+
             // One-to-many relationship between User and TimeLog
             modelBuilder.Entity<User>()
                 .HasMany(u => u.TimeLogs)
@@ -33,17 +37,19 @@ namespace TimeTracker.Data
                 .WithOne(e => e.TimeLog)
                 .HasForeignKey(e => e.TimeLogId);
 
-            // Peer Review relationships
+            // Peer Review relationships (using NetID as foreign key)
             modelBuilder.Entity<PeerReview>()
                 .HasOne(pr => pr.Reviewer)
                 .WithMany(u => u.ReviewsGiven)
                 .HasForeignKey(pr => pr.ReviewerId)
+                .HasPrincipalKey(u => u.NetID) // Use NetID as the principal key
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PeerReview>()
                 .HasOne(pr => pr.Reviewee)
                 .WithMany(u => u.ReviewsReceived)
                 .HasForeignKey(pr => pr.RevieweeId)
+                .HasPrincipalKey(u => u.NetID) // Use NetID as the principal key
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relationship between PeerReview and PeerReviewAnswer
@@ -57,7 +63,6 @@ namespace TimeTracker.Data
                 .HasOne(pra => pra.PeerReviewQuestion)
                 .WithMany()
                 .HasForeignKey(pra => pra.PeerReviewQuestionId);
-           
         }
     }
 }
