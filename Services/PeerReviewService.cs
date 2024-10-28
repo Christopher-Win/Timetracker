@@ -13,13 +13,15 @@ namespace TimeTracker.Services
             _context = context;
         }
 
-        public async Task<PeerReview?> GetPeerReviewByIdAsync(int id)
-        {
-            return await _context.PeerReviews
-                .Include(pr => pr.PeerReviewAnswers)
-                .ThenInclude(a => a.PeerReviewQuestion)
-                .FirstOrDefaultAsync(pr => pr.PeerReviewId == id);
-        }
+    public async Task<PeerReview?> GetPeerReviewByIdAsync(int id)
+    {
+        return await _context.PeerReviews
+            .Include(pr => pr.Reviewer) // Include the Reviewer
+            .Include(pr => pr.Reviewee) // Include the Reviewee
+            .Include(pr => pr.PeerReviewAnswers)
+            .ThenInclude(a => a.PeerReviewQuestion)
+            .FirstOrDefaultAsync(pr => pr.PeerReviewId == id);
+    }
 
         public async Task CreatePeerReviewAsync(PeerReview peerReview)
         {
