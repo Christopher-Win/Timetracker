@@ -56,5 +56,26 @@ namespace TimeTracker.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        // DELETE: api/peerreviewquestion/{id}
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task <IActionResult> DeletePeerReviewQuestion(int id)
+        {
+            var question = await _peerReviewQuestionService.GetPeerReviewQuestionByIdAsync(id);
+            if (question == null)
+            {
+                return NotFound("Peer review question not found.");
+            }
+            try
+            {
+                await _peerReviewQuestionService.DeletePeerReviewQuestionAsync(id);
+                return Ok(new { message = $"Question {id} deleted"});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

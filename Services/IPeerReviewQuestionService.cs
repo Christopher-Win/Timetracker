@@ -7,5 +7,6 @@ namespace TimeTracker.Services
         Task<List<PeerReviewQuestion>> GetAllPeerReviewQuestionsAsync();
         Task<PeerReviewQuestion?> GetPeerReviewQuestionByIdAsync(int id);
         Task CreatePeerReviewQuestionAsync(PeerReviewQuestion peerReviewQuestion);
+        Task DeletePeerReviewQuestionAsync (int id);
     }
 }
