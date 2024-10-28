@@ -90,5 +90,44 @@ namespace TimeTracker.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        // DELETE: api/peerreview/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePeerReview(int id)
+        {
+            try
+            {
+                // Retrieve the current user's NetID from the claims (authenticated user)
+                var currentNetId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(currentNetId))
+                {
+                    return Unauthorized("User NetID not found in the token.");
+                }
+
+                // Retrieve the peer review by ID
+                var peerReview = await _peerReviewService.GetPeerReviewByIdAsync(id);
+
+                if (peerReview == null)
+                {
+                    return NotFound("Peer review not found.");
+                }
+
+                // Check if the current user is the reviewer (or any other logic to authorize deletion)
+                if (peerReview.ReviewerId != currentNetId)
+                {
+                    return Forbid("You are not authorized to delete this peer review.");
+                }
+
+                // Delete the peer review
+                await _peerReviewService.DeletePeerReviewAsync(id);
+
+                return Ok($"Peer review {id} has been deleted"); // after successful deletion
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

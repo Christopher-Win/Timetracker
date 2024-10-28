@@ -26,5 +26,15 @@ namespace TimeTracker.Services
             _context.PeerReviews.Add(peerReview);
             await _context.SaveChangesAsync();
         }
+
+        public async Task DeletePeerReviewAsync(int id)
+        {
+            var peerReview = await _context.PeerReviews.FindAsync(id);
+            if (peerReview != null)
+            {
+                _context.PeerReviews.Remove(peerReview);
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }
