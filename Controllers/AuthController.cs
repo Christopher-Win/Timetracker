@@ -26,7 +26,7 @@ namespace TimeTracker.Controllers
         {
             // Extract the NetID from the authenticated user's claims
             var netIDClaim = User.GetUserNetId();
-        
+
             // Get the user by NetID
             var user = _authService.GetByNetId(netIDClaim);
 
@@ -98,7 +98,7 @@ namespace TimeTracker.Controllers
             }
 
             // If authentication fails, return Unauthorized
-            return Unauthorized(new { message = result.Message }); 
+            return Unauthorized(new { message = result.Message });
         }
         // PATCH /api/Auth/update-password endpoint to update the user's password
         [HttpPatch("update-password")]
@@ -107,7 +107,7 @@ namespace TimeTracker.Controllers
         {
             // Extract the NetID from the authenticated user's claims
             var netIDClaim = User.GetUserNetId();
-        
+
             // Get the user by NetID
             var user = _authService.GetByNetId(netIDClaim);
 
@@ -116,7 +116,7 @@ namespace TimeTracker.Controllers
                 return NotFound("User not found.");
             }
             //Attempt to update the password
-            var result = await _authService.UpdatePasswordAsync(user.NetID, request.Password); 
+            var result = await _authService.UpdatePasswordAsync(user.NetID, request.Password);
             // Check if the update was successful
             if (!result.Success)
             {

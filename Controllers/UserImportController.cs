@@ -9,7 +9,7 @@ namespace TimeTracker.Controllers
     [Route("api/[controller]")] // Base route-> api/UserImport
     public class UserImportController : ControllerBase
     {
-        private readonly IUserService _userService; 
+        private readonly IUserService _userService;
 
         public UserImportController(IUserService userService)
         {

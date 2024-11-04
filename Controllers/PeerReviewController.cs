@@ -15,8 +15,8 @@ namespace TimeTracker.Controllers
         private readonly IPeerReviewService _peerReviewService;
         private readonly IUserService _userService;
 
-        
-        public PeerReviewController (IPeerReviewService peerReviewService, IUserService userService)
+
+        public PeerReviewController(IPeerReviewService peerReviewService, IUserService userService)
         {
             _peerReviewService = peerReviewService;
             _userService = userService;
@@ -51,7 +51,7 @@ namespace TimeTracker.Controllers
 
                 // Ensure current user exists
                 var currentUser = await _userService.GetUserByNetIdAsync(currentNetId);
-                
+
                 if (currentUser == null)
                 {
                     return Unauthorized("Current user not found.");

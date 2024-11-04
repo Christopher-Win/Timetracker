@@ -18,7 +18,7 @@ namespace TimeTracker.Controllers
         {
             _userService = userService;
         }
-        
+
         [HttpGet("{netId}")]
         public async Task<IActionResult> GetUser(string netId)
         {
@@ -95,7 +95,7 @@ namespace TimeTracker.Controllers
 
             return Ok(users);
         }
-        
+
         // [Authorize(Roles = "Admin")]
         [HttpGet("groups")]
         public async Task<IActionResult> GetUsersByGroupAsync()
@@ -106,4 +106,3 @@ namespace TimeTracker.Controllers
         }
     }
 }
-    

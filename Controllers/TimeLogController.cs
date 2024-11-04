@@ -7,7 +7,8 @@ using TimeTracker.Models.Dto;
 using TimeTracker.Services;
 using TimeTracker.Extensions;
 
-namespace TimeTracker.Controllers{
+namespace TimeTracker.Controllers
+{
 
     [ApiController]
     [Route("api/timelogs")]
@@ -54,7 +55,7 @@ namespace TimeTracker.Controllers{
             var timeLog = await _timeLogService.GetOrCreateTimeLogForCurrentWeek(userId);
             return Ok(timeLog);
         }
-        
+
         // GET: api/timelog/{id} -> returns the time log with the specified id.
         [HttpGet("{id}")]
         [Authorize]
@@ -75,7 +76,7 @@ namespace TimeTracker.Controllers{
             }
             return Ok(timeLog);
         }
-        
+
         // POST: api/timelog/entry -> adds a time log entry for the current week of the logged in user.
         [HttpPost("entry")]
         [Authorize]
@@ -98,14 +99,14 @@ namespace TimeTracker.Controllers{
             return Ok("Time log entry added for the current week.");
         }
 
-        
+
         // GET: /api/timelog/{timeLogId}/entries -> returns all time log entries for the specified time log.
         [HttpGet("{timeLogId}/entries")]
         [Authorize]
         public async Task<IActionResult> GetTimeLogEntries(int timeLogId)
         {
             var userNetId = User.GetUserNetId();
-            
+
             var timeLogEntries = await _timeLogService.GetTimeLogEntries(timeLogId);
             // Console.WriteLine("Data requested by " + user.NetID);
             return Ok(timeLogEntries);
@@ -120,7 +121,7 @@ namespace TimeTracker.Controllers{
             {
                 return BadRequest(ModelState);
             }
-            
+
             var userNetId = User.GetUserNetId();
             var user = _authService.GetByNetId(userNetId);
             if (user == null)
@@ -129,7 +130,7 @@ namespace TimeTracker.Controllers{
             }
 
             int userId = user.Id;
-            
+
             var timeLogEntry = await _timeLogService.GetTimeLogEntry(id);
             if (timeLogEntry == null || timeLogEntry.TimeLog.UserId != userId)
             {
@@ -141,30 +142,30 @@ namespace TimeTracker.Controllers{
             return Ok("Time log entry updated.");
         }
 
-            // DELETE: api/timelog/entry/{id} -> deletes a time log entry for the logged-in user.
-            [HttpDelete("entry/{id}")]
-            [Authorize]
-            public async Task<IActionResult> DeleteTimeLogEntry(int id)
+        // DELETE: api/timelog/entry/{id} -> deletes a time log entry for the logged-in user.
+        [HttpDelete("entry/{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteTimeLogEntry(int id)
+        {
+            var userNetId = User.GetUserNetId();
+            var user = _authService.GetByNetId(userNetId);
+            if (user == null)
             {
-                var userNetId = User.GetUserNetId();
-                var user = _authService.GetByNetId(userNetId);
-                if (user == null)
-                {
-                    return Unauthorized("User not found or not authorized.");
-                }
-
-                int userId = user.Id;
-                
-                var timeLogEntry = await _timeLogService.GetTimeLogEntry(id);
-                if (timeLogEntry == null || timeLogEntry.TimeLog.UserId != userId)
-                {
-                    return NotFound("Time log entry not found.");
-                }
-
-                // Delete the time log entry
-                await _timeLogService.DeleteTimeLogEntry(id);
-                return Ok("Time log entry deleted.");
+                return Unauthorized("User not found or not authorized.");
             }
 
+            int userId = user.Id;
+
+            var timeLogEntry = await _timeLogService.GetTimeLogEntry(id);
+            if (timeLogEntry == null || timeLogEntry.TimeLog.UserId != userId)
+            {
+                return NotFound("Time log entry not found.");
             }
+
+            // Delete the time log entry
+            await _timeLogService.DeleteTimeLogEntry(id);
+            return Ok("Time log entry deleted.");
         }
+
+    }
+}
