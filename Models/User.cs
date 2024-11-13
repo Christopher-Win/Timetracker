@@ -35,5 +35,6 @@ namespace TimeTracker.Models
         [JsonIgnore]
     // Reviews that the user has received (from other students)
         public ICollection<PeerReview>? ReviewsReceived { get; set; }
+
     }
 }

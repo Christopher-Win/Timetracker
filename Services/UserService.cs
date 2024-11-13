@@ -47,8 +47,8 @@ public class UserService : IUserService
             }
 
             var values = line.Split('\t'); // Use Split to get each value in the line
-            Console.WriteLine($"LastName: {values[0].Trim()}, FirstName: {values[1].Trim()}, NetID: {values[2].Trim()}, UTDID: {values[3].Trim()}");
-            if (values.Length != 4)
+            Console.WriteLine($"LastName: {values[0].Trim()}, FirstName: {values[1].Trim()}, NetID: {values[2].Trim()}, UTDID: {values[3].Trim()}, Group: {values[4].Trim()}");
+            if (values.Length != 5)
             {
                 // Optionally log or skip invalid lines
                 continue;
@@ -58,6 +58,7 @@ public class UserService : IUserService
             var firstName = values[1].Trim();
             var netId = values[2].Trim();     // Username (NetID)
             var utdId = values[3].Trim();     // Student ID (UTDID)
+            var group = values[4].Trim(); //  Group Number
 
             // Check for existing user
             if (await _context.Users.AnyAsync(u => u.NetID == netId))
@@ -71,7 +72,8 @@ public class UserService : IUserService
                 LastName = lastName,
                 NetID = netId,
                 Password = HashPassword(utdId),
-                Role = "Student"
+                Role = "Student",
+                Group = int.Parse(group)
             };
 
             users.Add(user);// Add the new user to the list

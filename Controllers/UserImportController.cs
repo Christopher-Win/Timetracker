@@ -18,7 +18,7 @@ namespace TimeTracker.Controllers
 
         // Endpoint to upload the file containing user accounts
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadUserFile([FromForm] IFormFile file)
+        public async Task<IActionResult> UploadUserFile([FromForm] IFormFile file) // Must name the parameter 'file' to match the form field name
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
