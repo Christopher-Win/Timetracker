@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TimeTracker.Data;
 using TimeTracker.Models;
+using TimeTracker.Models.Dto;
 
 namespace TimeTracker.Services
 {
@@ -13,14 +14,32 @@ namespace TimeTracker.Services
             _context = context;
         }
 
-    public async Task<PeerReview?> GetPeerReviewByIdAsync(int id)
+    public async Task<PeerReviewWithAnswersDto?> GetPeerReviewByIdAsync(int id)
     {
-        return await _context.PeerReviews
+        var peerReview = await _context.PeerReviews
             .Include(pr => pr.Reviewer) // Include the Reviewer
             .Include(pr => pr.Reviewee) // Include the Reviewee
-            .Include(pr => pr.PeerReviewAnswers)
-            .ThenInclude(a => a.PeerReviewQuestion)
             .FirstOrDefaultAsync(pr => pr.PeerReviewId == id);
+        
+        if (peerReview == null)
+        {
+            return null;
+        }
+
+        // Include the answers associated with the peer review
+        var peerReviewAnswers = await _context.PeerReviewAnswers
+            .Include(pra => pra.PeerReviewQuestion) // Include the question
+            .Where(pra => pra.PeerReviewId == id)
+            .ToListAsync();
+
+        var result = new PeerReviewWithAnswersDto
+        {
+                RevieweeId = peerReview.RevieweeId,
+                ReviewerId = peerReview.ReviewerId,
+                PeerReviewAnswers = peerReviewAnswers
+        };
+        
+        return result;
     }
 
         public async Task CreatePeerReviewAsync(PeerReview peerReview)

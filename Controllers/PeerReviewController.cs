@@ -37,7 +37,7 @@ namespace TimeTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePeerReview([FromForm] CreatePeerReviewDTO peerReviewDto)
+        public async Task<IActionResult> CreatePeerReview([FromForm] PeerReviewSubmissionDto peerReviewDto)
         {
             try
             {
@@ -56,7 +56,8 @@ namespace TimeTracker.Controllers
                 {
                     return Unauthorized("Current user not found.");
                 }
-
+                // Handle PeerReview Answers
+                
                 // Create a new PeerReview instance and assign necessary properties
                 var peerReview = new PeerReview
                 {
@@ -66,7 +67,6 @@ namespace TimeTracker.Controllers
                     Reviewee = await _userService.GetUserByNetIdAsync(peerReviewDto.RevieweeId),
                     StartDate = peerReviewDto.StartDate,
                     EndDate = peerReviewDto.EndDate,
-                    PeerReviewAnswers = peerReviewDto.PeerReviewAnswers
                 };
 
                 if (peerReview.Reviewee == null)

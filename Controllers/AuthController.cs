@@ -98,7 +98,7 @@ namespace TimeTracker.Controllers
             }
 
             // If authentication fails, return Unauthorized
-            return Unauthorized(new { message = result.Message });
+            return Unauthorized(new { message = result.Message }); 
         }
         // PATCH /api/Auth/update-password endpoint to update the user's password
         [HttpPatch("update-password")]
@@ -109,7 +109,7 @@ namespace TimeTracker.Controllers
             var netIDClaim = User.GetUserNetId();
 
             // Get the user by NetID
-            var user = _authService.GetByNetId(netIDClaim);
+            var user = _authService.GetByNetId(netIDClaim); 
 
             if (user is null)
             {
