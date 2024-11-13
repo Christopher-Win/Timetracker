@@ -13,11 +13,8 @@ namespace TimeTracker.Models{
         // Time window for submission
         public DateTime StartDate { get; set; } // The earliest date the review can be submitted
         public DateTime EndDate { get; set; } // The latest date the review can be submitted
-
         // Submission date
         public DateTime SubmittedAt { get; set; } = DateTime.Now;
 
-        // Collection of answers for each question in this review
-        public required ICollection<PeerReviewAnswer> PeerReviewAnswers { get; set; }
     }
 }

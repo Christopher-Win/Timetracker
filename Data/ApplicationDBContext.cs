@@ -55,7 +55,7 @@ namespace TimeTracker.Data
             // Relationship between PeerReview and PeerReviewAnswer
             modelBuilder.Entity<PeerReviewAnswer>()
                 .HasOne(pra => pra.PeerReview)
-                .WithMany(pr => pr.PeerReviewAnswers)
+                .WithMany()
                 .HasForeignKey(pra => pra.PeerReviewId);
 
             // Relationship between PeerReviewAnswer and PeerReviewQuestion
