@@ -1,48 +1,48 @@
 trigger:
-- master
+  - master
 
 pool:
-  name: 'Default'  # Ensure this is your self-hosted agent pool on Mac
+  name: "Default" # Ensure this is your self-hosted agent pool on Mac
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  solution: "**/*.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
 
 steps:
-# Step 1: Install .NET SDK (Optional if already installed on the agent)
-- task: UseDotNet@2
-  inputs:
-    packageType: 'sdk'
-    version: '8.x'  # Ensure this matches the .NET version you need
+  # Step 1: Install .NET SDK (Optional if already installed on the agent)
+  - task: UseDotNet@2
+    inputs:
+      packageType: "sdk"
+      version: "8.x" # Ensure this matches the .NET version you need
 
-# Step 2: Restore NuGet packages using dotnet
-- script: |
-    dotnet restore $(solution)
-  displayName: 'Restore NuGet Packages'
+  # Step 2: Restore NuGet packages using dotnet
+  - script: |
+      dotnet restore $(solution)
+    displayName: "Restore NuGet Packages"
 
-# Step 3: Build the solution using dotnet
-- script: |
-    dotnet build $(solution) --configuration $(buildConfiguration) --no-restore
-  displayName: 'Build the Solution'
+  # Step 3: Build the solution using dotnet
+  - script: |
+      dotnet build $(solution) --configuration $(buildConfiguration) --no-restore
+    displayName: "Build the Solution"
 
-# Step 4: Run tests using dotnet
-- script: |
-    dotnet test $(solution) --configuration $(buildConfiguration) --no-build --verbosity normal
-  displayName: 'Run Tests'
+  # Step 4: Run tests using dotnet
+  - script: |
+      dotnet test $(solution) --configuration $(buildConfiguration) --no-build --verbosity normal
+    displayName: "Run Tests"
 
-# Step 5: Publish the build artifacts (optional, if you want to save them)
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: '$(Build.SourcesDirectory)/bin/$(buildConfiguration)'
-    artifactName: 'drop'
-    publishLocation: 'Container'
+  # Step 5: Publish the build artifacts (optional, if you want to save them)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: "$(Build.SourcesDirectory)/bin/$(buildConfiguration)"
+      artifactName: "drop"
+      publishLocation: "Container"
 
-# Step 6: Deploy to Azure App Service
-- task: AzureWebApp@1
-  inputs:
-    azureSubscription: 'Azure for Students(f9b95ca3-25fb-4d08-bfd7-0f05e6480d0e)'  # Ensure this is correct
-    appName: 'timetrackerUTD'
-    package: '$(Build.SourcesDirectory)/bin/$(buildConfiguration)/**/*.zip'  # Correct artifact location
-    runtimeStack: 'DOTNETCORE|8.0'  # Ensure the runtime stack matches the .NET version you're using
-  displayName: 'Deploy to Azure App Service'
+  # Step 6: Deploy to Azure App Service
+  - task: AzureWebApp@1
+    inputs:
+      azureSubscription: "Azure for Students(f9b95ca3-25fb-4d08-bfd7-0f05e6480d0e)" # Ensure this is correct
+      appName: "timetrackerUTD"
+      package: "$(Build.SourcesDirectory)/bin/$(buildConfiguration)/**/*.zip" # Correct artifact location
+      runtimeStack: "DOTNETCORE|8.0" # Ensure the runtime stack matches the .NET version you're using
+    displayName: "Deploy to Azure App Service"
