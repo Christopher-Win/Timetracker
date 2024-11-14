@@ -6,7 +6,7 @@ namespace TimeTracker.Services
     public interface IPeerReviewService
     {
         Task CreatePeerReviewAsync(PeerReview peerReview);
-        Task<PeerReviewWithAnswersDto> GetPeerReviewByIdAsync(int id); // Change the return type to PeerReviewWithAnswersDto //Chris N
+        Task<PeerReview?> GetPeerReviewByIdAsync(int id);
         Task DeletePeerReviewAsync(int id);
     }
 }
