@@ -8,8 +8,7 @@ namespace TimeTracker.Models
     {
         public int Id { get; set; }
         public int TimeLogId { get; set; }  // Foreign key to TimeLog
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        
         public int Duration { get; set; }  // Duration in minutes
         public string Description { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;  // Default value for CreatedAt

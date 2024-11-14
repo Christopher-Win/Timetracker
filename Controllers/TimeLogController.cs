@@ -95,7 +95,7 @@ namespace TimeTracker.Controllers
 
             int userId = user.Id;
 
-            await _timeLogService.AddTimeLogEntryForCurrentWeek(userId, entryDto.StartTime, entryDto.EndTime, entryDto.Description);
+            await _timeLogService.AddTimeLogEntryForCurrentWeek(userId, entryDto.Duration, entryDto.Description);
             return Ok("Time log entry added for the current week.");
         }
 
@@ -138,7 +138,7 @@ namespace TimeTracker.Controllers
             }
 
             // Update the time log entry
-            await _timeLogService.UpdateTimeLogEntry(id, entryDto.StartTime, entryDto.EndTime, entryDto.Description);
+            await _timeLogService.UpdateTimeLogEntry(id, entryDto.Duration, entryDto.Description);
             return Ok("Time log entry updated.");
         }
 

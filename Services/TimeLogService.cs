@@ -110,16 +110,15 @@ namespace TimeTracker.Services{
         }
 
         // Method to add a TimeLogEntry to the current week's TimeLog for the user
-        public async Task AddTimeLogEntryForCurrentWeek(int userId, DateTime startTime, DateTime endTime, string description)
+        public async Task AddTimeLogEntryForCurrentWeek(int userId, int duration, string description)
         {
             var currentWeekLog = await GetOrCreateTimeLogForCurrentWeek(userId); // Get the User's TimeLog for the current week given their userId
             
             var timeLogEntry = new TimeLogEntry
             {
                 TimeLogId = currentWeekLog.Id, 
-                StartTime = startTime,
-                EndTime = endTime,
-                Duration = (int)(endTime - startTime).TotalMinutes,
+             
+                Duration = duration,
                 Description = description,
                 CreatedAt = DateTime.Now
             };
@@ -142,9 +141,7 @@ namespace TimeTracker.Services{
                 var timeLogEntryDto = new TimeLogEntryDto
                 {
                     Id = entry.Id,
-                    StartTime = entry.StartTime,
-                    EndTime = entry.EndTime,
-                    Duration = (int)(entry.EndTime - entry.StartTime).TotalMinutes,
+                    Duration = entry.Duration,
                     CreatedAt = entry.CreatedAt,
                     Description = entry.Description
                 };
@@ -155,17 +152,14 @@ namespace TimeTracker.Services{
         }
 
         // Method to update a specific TimeLogEntry
-        public async Task UpdateTimeLogEntry(int timeLogEntryId, DateTime startTime, DateTime endTime, string description)
+        public async Task UpdateTimeLogEntry(int timeLogEntryId, int duration, string description)
         {
             var timeLogEntry = await _context.TimeLogEntries.FindAsync(timeLogEntryId);
 
             if (timeLogEntry != null)
             {
-                timeLogEntry.StartTime = startTime;
-                timeLogEntry.EndTime = endTime;
-                timeLogEntry.Duration = (int)(endTime - startTime).TotalMinutes;
+                timeLogEntry.Duration = duration;
                 timeLogEntry.Description = description;
-
                 await _context.SaveChangesAsync();
             }
         }
