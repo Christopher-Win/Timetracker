@@ -154,7 +154,7 @@ app.MapControllers();
 // Configure cookie policy
 app.UseCookiePolicy(new CookiePolicyOptions
 {
-    MinimumSameSitePolicy = SameSiteMode.None,
+    MinimumSameSitePolicy = SameSiteMode.Lax,
 });
 
 // Run the application
