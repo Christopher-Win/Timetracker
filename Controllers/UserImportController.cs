@@ -33,7 +33,7 @@ namespace TimeTracker.Controllers
             {
                 return BadRequest(new { message = ex.Message });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log exception (not shown here)
                 return StatusCode(500, new { message = "An unexpected error occurred." });
