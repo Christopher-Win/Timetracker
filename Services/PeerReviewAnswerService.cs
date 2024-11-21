@@ -30,14 +30,14 @@ public class PeerReviewAnswerService : IPeerReviewAnswerService
         return await _context.PeerReviewQuestions.FindAsync(questionId); // Retrieve the question by ID
     }
 
-    public async Task<PeerReview?> GetPeerReviewByReviewerAndRevieweeAsync(string reviewerId, string revieweeId)
+    public async Task<IEnumerable<PeerReview>> GetPeerReviewsByReviewerAndRevieweeAsync(string reviewerId, string revieweeId)
     {
         return await _context.PeerReviews
-            .Include(pr => pr.Reviewer)
-            .Include(pr => pr.Reviewee)
+            .Include(pr => pr.Reviewer) // Include Reviewer navigation property
+            .Include(pr => pr.Reviewee) // Include Reviewee navigation property
             .Where(pr => pr.ReviewerId == reviewerId && pr.RevieweeId == revieweeId)
-            .OrderByDescending(pr => pr.SubmittedAt) // Or use pr.PeerReviewId
-            .FirstOrDefaultAsync();
+            .OrderByDescending(pr => pr.SubmittedAt) // Order by SubmittedAt descending
+            .ToListAsync();
     }
     
 }

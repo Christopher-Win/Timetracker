@@ -38,28 +38,34 @@ public class PeerReviewAnswerController : ControllerBase
             return NotFound($"Reviewee with ID {revieweeId} not found.");
         }
 
-        // Retrieve the most recent PeerReview
-        var peerReview = await _peerReviewAnswerService.GetPeerReviewByReviewerAndRevieweeAsync(reviewerId, revieweeId);
-        if (peerReview == null)
+        // Retrieve all PeerReview records between the reviewer and reviewee, ordered by SubmittedAt (descending)
+        var peerReviews = await _peerReviewAnswerService.GetPeerReviewsByReviewerAndRevieweeAsync(reviewerId, revieweeId);
+        if (!peerReviews.Any())
         {
-            return NotFound("No peer review found between the specified reviewer and reviewee.");
+            return NotFound("No peer reviews found between the specified reviewer and reviewee.");
         }
 
-        // Retrieve answers for the peer review
-        var answers = await _peerReviewAnswerService.GetAnswersByPeerReviewIdAsync(peerReview.PeerReviewId);
+        // Retrieve all answers for each PeerReview
+        var response = new List<object>();
 
-        if (!answers.Any())
+        foreach (var peerReview in peerReviews)
         {
-            return Ok("No answers found for this peer review.");
+            var answers = await _peerReviewAnswerService.GetAnswersByPeerReviewIdAsync(peerReview.PeerReviewId);
+
+            response.Add(new
+            {
+                PeerReviewId = peerReview.PeerReviewId,
+                ReviewerName = $"{peerReview.Reviewer.FirstName} {peerReview.Reviewer.LastName}",
+                RevieweeName = $"{peerReview.Reviewee.FirstName} {peerReview.Reviewee.LastName}",
+                peerReview.SubmittedAt,
+                Answers = answers.Select(answer => new
+                {
+                    Question = answer.PeerReviewQuestion.QuestionText,
+                    answer.NumericalFeedback,
+                    answer.WrittenFeedback
+                })
+            });
         }
-
-        // Simplify the response
-        var response = answers.Select(answer => new
-        {
-            Question = answer.PeerReviewQuestion.QuestionText,
-            answer.NumericalFeedback,
-            answer.WrittenFeedback
-        });
 
         return Ok(response);
     }

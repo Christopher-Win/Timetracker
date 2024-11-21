@@ -6,5 +6,5 @@ public interface IPeerReviewAnswerService
     Task<IEnumerable<PeerReviewAnswer>> GetAnswersByPeerReviewIdAsync(int peerReviewId);
     Task<PeerReviewQuestion?> GetPeerReviewQuestionByIdAsync(int questionId); // New method
 
-    Task<PeerReview?> GetPeerReviewByReviewerAndRevieweeAsync(string reviewerId, string revieweeId);
+    Task<IEnumerable<PeerReview>> GetPeerReviewsByReviewerAndRevieweeAsync(string reviewerId, string revieweeId);
 }
