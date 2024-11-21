@@ -1,3 +1,4 @@
+// Written by: Chris N.
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Services;

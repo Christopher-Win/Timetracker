@@ -1,3 +1,4 @@
+// Written by: Aayush P. and Chris N.
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Models;
@@ -12,7 +13,7 @@ namespace TimeTracker.Controllers
     {
         private readonly AuthService _authService;
 
-        public AuthController(AuthService authService)
+        public AuthController(AuthService authService)//Written by: Chris N.
         {
             _authService = authService;
         }
@@ -20,7 +21,7 @@ namespace TimeTracker.Controllers
         // Secured endpoint to get the user based on the JWT stored in the cookie
         [HttpGet("me")]
         [Authorize]  // Ensure that the user is authenticated
-        public ActionResult<User> GetUserFromJwt()
+        public ActionResult<User> GetUserFromJwt()//Written by: Chris N.
         {
             // Extract the NetID from the authenticated user's claims
             var netIDClaim = User.GetUserNetId();
@@ -38,7 +39,7 @@ namespace TimeTracker.Controllers
 
         // Register a new user
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromForm] User user)
+        public async Task<IActionResult> Register([FromForm] User user)//Written by: Chris N.
         {
             if (!ModelState.IsValid)
             {
@@ -58,7 +59,7 @@ namespace TimeTracker.Controllers
 
         // Login a user and set JWT token in cookie
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromForm] LoginRequest request)
+        public async Task<IActionResult> Login([FromForm] LoginRequest request)//Written by: Chris N.
         {
             // Ensure NetID and Password are not null or empty
             if (string.IsNullOrEmpty(request.NetID) || string.IsNullOrEmpty(request.Password))
@@ -101,7 +102,7 @@ namespace TimeTracker.Controllers
         // PATCH /api/Auth/update-password endpoint to update the user's password
         [HttpPatch("update-password")]
         [Authorize]  // Ensure that the user is authenticated
-        public async Task<IActionResult> UpdatePassword([FromForm] UpdatePasswordRequest request)
+        public async Task<IActionResult> UpdatePassword([FromForm] UpdatePasswordRequest request)//Written by: Chris N.
         {
             // Extract the NetID from the authenticated user's claims
             var netIDClaim = User.GetUserNetId();
@@ -125,18 +126,18 @@ namespace TimeTracker.Controllers
         // Logout the user by removing the JWT cookie
         [HttpPost("logout")]
         [Authorize]  // Ensure that the user is authenticated
-        public IActionResult Logout()
+        public IActionResult Logout()//Written by: Aayush P.
         {
             Response.Cookies.Delete("jwt"); // Remove the JWT cookie from the client's cookies ie., log the user out
             return Ok(new { message = "Logout successful" });
         }
 
         // Request to reset the user's password
-        public class UpdatePasswordRequest
+        public class UpdatePasswordRequest  //Written by: Chris N.
         {
             public string Password { get; set; } = string.Empty;
         }
-        public class LoginRequest
+        public class LoginRequest //Written by: Chris N.
         {
             public string NetID { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;

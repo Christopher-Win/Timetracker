@@ -1,3 +1,4 @@
+// Written by: Aayush P. and Chris N.
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TimeTracker.Models.Dto;
@@ -6,14 +7,14 @@ using TimeTracker.Extensions;
 
 namespace TimeTracker.Controllers
 {
-
+    
     [ApiController]
     [Route("api/timelogs")]
     public class TimeLogController : ControllerBase
     {
         private readonly TimeLogService _timeLogService;
         private readonly AuthService _authService;
-        public TimeLogController(TimeLogService timeLogService, AuthService authService)
+        public TimeLogController(TimeLogService timeLogService, AuthService authService)// Written by: Chris N.
         {
             _timeLogService = timeLogService;
             _authService = authService;
@@ -22,7 +23,8 @@ namespace TimeTracker.Controllers
         // GET: api/timelog/me -> returns all time logs for the logged in user.
         [HttpGet("me")]
         [Authorize]
-        public async Task<IActionResult> GetTimeLogs()
+        public async Task<IActionResult> GetTimeLogs()// Written by: Chris N.
+
         {
             var userNetId = User.GetUserNetId();
             var user = _authService.GetByNetId(userNetId);
@@ -39,7 +41,7 @@ namespace TimeTracker.Controllers
         // GET: api/timelog/current -> returns the time log for the current week of the logged in user.
         [HttpGet("current")]
         [Authorize]
-        public async Task<IActionResult> GetCurrentTimeLog()
+        public async Task<IActionResult> GetCurrentTimeLog()// Written by: Chris N.
         {
             var userNetId = User.GetUserNetId();
             var user = _authService.GetByNetId(userNetId);
@@ -56,7 +58,7 @@ namespace TimeTracker.Controllers
         // GET: api/timelog/{id} -> returns the time log with the specified id.
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetTimeLog(int id)
+        public async Task<IActionResult> GetTimeLog(int id)// Written by: Chris N.
         {
             var userNetId = User.GetUserNetId();
             var user = _authService.GetByNetId(userNetId);
@@ -77,7 +79,7 @@ namespace TimeTracker.Controllers
         // POST: api/timelog/entry -> adds a time log entry for the current week of the logged in user.
         [HttpPost("entry")]
         [Authorize]
-        public async Task<IActionResult> AddTimeLogEntry([FromForm] TimeLogEntryDto entryDto)
+        public async Task<IActionResult> AddTimeLogEntry([FromForm] TimeLogEntryDto entryDto) // Written by: Aayush P.
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +102,7 @@ namespace TimeTracker.Controllers
         // GET: /api/timelog/{timeLogId}/entries -> returns all time log entries for the specified time log.
         [HttpGet("{timeLogId}/entries")]
         [Authorize]
-        public async Task<IActionResult> GetTimeLogEntries(int timeLogId)
+        public async Task<IActionResult> GetTimeLogEntries(int timeLogId)// Written by: Aayush P.
         {
             var userNetId = User.GetUserNetId();
 
@@ -112,7 +114,7 @@ namespace TimeTracker.Controllers
         // PATCH: api/timelog/entry/{id} -> updates a time log entry for the logged-in user.
         [HttpPatch("entry/{id}")]
         [Authorize]
-        public async Task<IActionResult> UpdateTimeLogEntry(int id, [FromForm] TimeLogEntryDto entryDto)
+        public async Task<IActionResult> UpdateTimeLogEntry(int id, [FromForm] TimeLogEntryDto entryDto)// Written by: Aayush P.
         {
             if (!ModelState.IsValid)
             {
@@ -142,7 +144,7 @@ namespace TimeTracker.Controllers
         // DELETE: api/timelog/entry/{id} -> deletes a time log entry for the logged-in user.
         [HttpDelete("entry/{id}")]
         [Authorize]
-        public async Task<IActionResult> DeleteTimeLogEntry(int id)
+        public async Task<IActionResult> DeleteTimeLogEntry(int id)// Written by: Aayush P.
         {
             var userNetId = User.GetUserNetId();
             var user = _authService.GetByNetId(userNetId);

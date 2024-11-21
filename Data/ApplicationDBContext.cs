@@ -1,5 +1,4 @@
-// File: Data/ApplicationDBContext.cs
-
+// Written by: Chris N.
 using Microsoft.EntityFrameworkCore;
 using TimeTracker.Models;  // Make sure to adjust this namespace for your project
 

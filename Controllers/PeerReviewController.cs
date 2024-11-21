@@ -1,3 +1,4 @@
+// Written by: Aayush P.
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using TimeTracker.Models;

@@ -1,3 +1,4 @@
+// Written by: Chris N.
 using System.Security.Claims;
 using TimeTracker.Services;
 

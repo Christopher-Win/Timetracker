@@ -1,3 +1,4 @@
+// Written by: Chris N.
 namespace TimeTracker.Models.Dto
 {
     public class UpdateUserGroupDto
