@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TimeTracker.Models;
 using TimeTracker.Services;
-using System.Security.Claims;
-using TimeTracker.Extensions;
 using TimeTracker.Models.Dto;
 
 namespace TimeTracker.Controllers

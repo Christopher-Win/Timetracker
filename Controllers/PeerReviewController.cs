@@ -5,7 +5,6 @@ using TimeTracker.Services;
 using Microsoft.AspNetCore.Authorization;
 using TimeTracker.Models.Dto;
 using TimeTracker.Data;
-using System.Text.Json;
 
 namespace TimeTracker.Controllers
 {

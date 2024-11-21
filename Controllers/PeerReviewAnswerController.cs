@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using TimeTracker.Models;
 using TimeTracker.Services;
 using Microsoft.AspNetCore.Authorization;
-using TimeTracker.Models.Dto;
 
 [Route("api/[controller]")]
 [ApiController]
