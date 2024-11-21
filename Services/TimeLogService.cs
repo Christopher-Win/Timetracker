@@ -40,7 +40,9 @@ namespace TimeTracker.Services{
                     Id = timeLog.Id,
                     UserId = timeLog.UserId,
                     Title = timeLog.Title,
-                    CreatedAt = timeLog.CreatedAt
+                    CreatedAt = timeLog.CreatedAt,
+                    TimeLogEntries = await GetTimeLogEntries(timeLog.Id)
+
                 };
                 timeLogDtos.Add(timeLogDto);
             }
