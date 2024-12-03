@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization; // Enables role-based or policy-based 
 // Base URL for this controller: api/PeerReviewAnswer
 [Route("api/[controller]")]
 [ApiController] // Indicates this is a RESTful API controller
-[Authorize] // Ensures that only authenticated users can access the endpoints
+[Authorize(Roles = "Admin")] // Ensures that only authenticated users can access the endpoints
 public class PeerReviewAnswerController : ControllerBase
 {
     private readonly IPeerReviewAnswerService _peerReviewAnswerService; // Handles Peer Review Answer operations
