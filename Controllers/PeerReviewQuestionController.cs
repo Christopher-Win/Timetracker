@@ -39,7 +39,7 @@ namespace TimeTracker.Controllers
 
         // POST: api/peerreviewquestion
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreatePeerReviewQuestion([FromForm] PeerReviewQuestion peerReviewQuestion)
         {
             if (peerReviewQuestion == null || string.IsNullOrEmpty(peerReviewQuestion.QuestionText))
@@ -60,7 +60,7 @@ namespace TimeTracker.Controllers
 
         // DELETE: api/peerreviewquestion/{id}
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePeerReviewQuestion(int id)
         {
             var question = await _peerReviewQuestionService.GetPeerReviewQuestionByIdAsync(id);
