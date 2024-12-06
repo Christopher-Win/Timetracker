@@ -3,13 +3,11 @@
 // ****************** Chris N. *********************
 // *************************************************
 
-using Microsoft.AspNetCore.Authorization; // Provides attributes for role-based access control
 using Microsoft.AspNetCore.Mvc; // Enables building RESTful APIs
 using TimeTracker.Services; // References the service layer for user-related operations
 
 namespace TimeTracker.Controllers
 {
-    [Authorize(Roles = "Admin")] // Ensures only authenticated users with the Admin role can access this controller
     [ApiController] // Marks this class as a REST API controller, enabling features like automatic model validation
     [Route("api/[controller]")] // Specifies the base URL for all endpoints in this controller (e.g., api/UserImport)
     public class UserImportController : ControllerBase

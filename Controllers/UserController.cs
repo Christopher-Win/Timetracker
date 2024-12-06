@@ -68,7 +68,6 @@ namespace TimeTracker.Controllers
 
         // GET: api/user/group/{groupId}
         // Retrieves all users belonging to a specific group (restricted to Admin role)
-        [Authorize(Roles = "Admin")] // Ensures only Admin users can access this endpoint
         [HttpGet("group/{groupId}")]
         public async Task<IActionResult> GetUsersByGroup(int groupId)
         {

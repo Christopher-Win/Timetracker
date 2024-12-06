@@ -6,7 +6,6 @@
 using Microsoft.AspNetCore.Mvc; // Provides functionality for building RESTful APIs
 using TimeTracker.Models; // References application models like PeerReviewQuestion
 using TimeTracker.Services; // Includes service interfaces and implementations for PeerReviewQuestion
-using Microsoft.AspNetCore.Authorization; // Enables role-based or policy-based access control
 
 namespace TimeTracker.Controllers
 {
@@ -51,7 +50,6 @@ namespace TimeTracker.Controllers
         // POST: api/peerreviewquestion
         // Creates a new peer review question
         [HttpPost]
-        //[Authorize(Roles = "Admin")] // Uncomment to restrict this action to Admin users
         public async Task<IActionResult> CreatePeerReviewQuestion([FromForm] PeerReviewQuestion peerReviewQuestion)
         {
             // Validate that the question object is not null and contains valid data
@@ -77,7 +75,6 @@ namespace TimeTracker.Controllers
         // DELETE: api/peerreviewquestion/{id}
         // Deletes a specific peer review question by its unique ID
         [HttpDelete("{id}")]
-        //[Authorize(Roles = "Admin")] // Uncomment to restrict this action to Admin users
         public async Task<IActionResult> DeletePeerReviewQuestion(int id)
         {
             // Fetch the peer review question to verify it exists
