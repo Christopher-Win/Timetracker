@@ -1,3 +1,8 @@
+// *************************************************
+// **************** Written by: ********************
+// ************** Aayush P. and Chris N. ***********
+// *************************************************
+
 using TimeTracker.Models; // References application models, including the User model
 using Microsoft.AspNetCore.Http; // Provides classes for handling HTTP requests, such as file uploads
 using Microsoft.AspNetCore.Identity; // Enables Identity-related functionality (not directly used here)

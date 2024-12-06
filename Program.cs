@@ -1,3 +1,8 @@
+// *************************************************
+// **************** Written by: ********************
+// ************** Aayush P. and Chris N. ***********
+// *************************************************
+
 using Microsoft.EntityFrameworkCore; // Provides ORM functionality for database interactions
 using TimeTracker.Data; // References the application's database context
 using TimeTracker.Services; // Includes application services like AuthService and TimeLogService

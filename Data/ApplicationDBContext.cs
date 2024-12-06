@@ -1,4 +1,8 @@
-// Written by: Chris N.
+// *************************************************
+// ***************** Written by: *******************
+// ****************** Chris N. *********************
+// *************************************************
+
 using Microsoft.EntityFrameworkCore; // Provides the Entity Framework Core ORM for database operations
 using TimeTracker.Models; // References application models for entities like User, TimeLog, etc.
 

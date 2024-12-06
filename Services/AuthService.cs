@@ -1,4 +1,8 @@
-using System.Threading.Tasks;
+// *************************************************
+// **************** Written by: ********************
+// ************** Aayush P. and Chris N. ***********
+// *************************************************
+
 using TimeTracker.Models; // References application models like User
 using TimeTracker.Data; // Provides access to the database context
 using System.Security.Cryptography; // Provides cryptographic functions for hashing passwords

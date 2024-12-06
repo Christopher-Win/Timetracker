@@ -1,4 +1,8 @@
-// Written by: Chris N.
+// *************************************************
+// ***************** Written by: *******************
+// ****************** Chris N. *********************
+// *************************************************
+
 using System.ComponentModel.DataAnnotations; // Provides attributes for validation, such as [Required] and [Key]
 using System.ComponentModel.DataAnnotations.Schema; // Enables custom configurations for database fields, like [DatabaseGenerated]
 using Microsoft.EntityFrameworkCore; // Provides Entity Framework Core features, such as defining indexes

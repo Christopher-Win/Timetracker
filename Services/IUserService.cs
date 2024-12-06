@@ -1,3 +1,8 @@
+// *************************************************
+// ***************** Written by: *******************
+// ****************** Chris N. *********************
+// *************************************************
+
 // Provides asynchronous methods for managing user-related operations
 using System.Threading.Tasks; // Enables asynchronous programming
 using Microsoft.AspNetCore.Http; // Provides classes for handling HTTP requests, including file uploads

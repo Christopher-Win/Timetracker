@@ -1,4 +1,8 @@
-// Written by: Aayush P.
+// *************************************************
+// ***************** Written by: *******************
+// ****************** Aayush P. ********************
+// *************************************************
+
 using Microsoft.AspNetCore.Mvc; // Provides functionality for building RESTful APIs
 using System.Security.Claims; // Enables extraction of claims from the authenticated user's JWT
 using TimeTracker.Models; // References application models like PeerReview

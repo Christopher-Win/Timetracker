@@ -1,4 +1,8 @@
-// Written by: Chris N.
+// *************************************************
+// ***************** Written by: *******************
+// ****************** Chris N. *********************
+// *************************************************
+
 using System.ComponentModel.DataAnnotations;  // For data annotations
 using System.ComponentModel.DataAnnotations.Schema;  // For custom table or column settings
 using System.Text.Json.Serialization;

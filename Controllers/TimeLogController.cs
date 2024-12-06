@@ -1,4 +1,8 @@
-// Written by: Aayush P. and Chris N.
+// *************************************************
+// **************** Written by: ********************
+// ************** Aayush P. and Chris N. ***********
+// *************************************************
+
 using Microsoft.AspNetCore.Authorization; // Provides attributes for securing endpoints
 using Microsoft.AspNetCore.Mvc; // Enables building RESTful APIs
 using TimeTracker.Models.Dto; // Contains Data Transfer Objects (DTOs) for TimeLog and TimeLogEntry

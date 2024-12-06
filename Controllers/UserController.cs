@@ -1,4 +1,8 @@
-// Written by: Chris N.
+// *************************************************
+// **************** Written by: ********************
+// ************** Aayush P. and Chris N. ***********
+// *************************************************
+
 using Microsoft.AspNetCore.Authorization; // Provides role-based and policy-based authorization
 using Microsoft.AspNetCore.Mvc; // Enables building RESTful APIs
 using TimeTracker.Services; // References service layer for user-related operations
